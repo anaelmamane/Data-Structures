@@ -9,34 +9,105 @@
 #include <unordered_map>
 
 using namespace std;
+struct Case {
+	 string dateCDC; //Holds the data the CDC report data
+	int month; //Holds the data the CDC report data
+	string sex; //Holds the sex of the person
+	string age; //Holds the age range of the person
+	string race; //Holds the race person
+	string hospitalization; //Hospitalization
 	string icu; //ICU admittance
-	//AVL class that has nodes, the case
-	class AVL_Tree {
-	public:
-		struct Case {
-			string dateCDC; //Holds the data the CDC report data
-			string sex; //Holds the sex of the person
-			string age; //Holds the age range of the person
-			string race; //Holds the race person
-			string hospitalization; //Hospitalization
-			string icu; //ICU admittance
-			string death; //Did the person die
-			string medicalCondition; //Did the person have a medical condition
-		};
-		Case* root;
-	};
+	string death; //Did the person die
+	string medicalCondition; //Did the person have a medical condition
+	Case* right = nullptr;
+	Case* left = nullptr;
+	int threshold;
+};
+class AVL_Tree {
+public:
+	Case* insert_AVL(Case* root, Case* newcase);
+	Case* root;
+	int calculateThreshold(Case* case_);
+	int height(Case* case_);
+	Case* rotateRight(Case* case_);
+	Case* rotateLeft(Case* case_);
+};
+Case* AVL_Tree::rotateLeft(Case* case_) {
+	Case* newparent = case_->right;
+	Case* temp = newparent->left;
+	newparent->left = case_;
+	case_->right = temp;
+	return newparent;
+}
 
+Case* AVL_Tree::rotateRight(Case* newcase) {
+	Case* newparent = newcase->left;
+	Case* temp = newparent->right;
+	newparent->right = newcase;
+	newcase->left = temp;
+	return newparent;
+}
+int AVL_Tree::height(Case* root) {
+	if (root == nullptr)
+		return 0;
+	else
+		return 1 + std::max(height(root->left), height(root->right));
+}
+int AVL_Tree::calculateThreshold(Case* case_) {
+	int leftheight = height(case_->left);
+	int rightheight = height(case_->right);
+	case_->threshold = leftheight - rightheight;
+	return leftheight - rightheight;
+}
+
+Case* AVL_Tree::insert_AVL(Case* root, Case* newcase) {
+if (root == nullptr) {
+	return newcase;
+}
+else if (newcase->dateCDC < root->dateCDC) {
+	root->left = insert_AVL(root->left, newcase);
+	calculateThreshold(root);
+}
+else {
+	root->right = insert_AVL(root->right, newcase);
+	calculateThreshold(root);
+}
+
+//used the table from the AVL trees powerpoint that describes the rotation done at each instance of the threshold.
+
+if (root->threshold == 2) {
+	if (root->left->threshold == 1)
+		return rotateRight(root);
+	else if (root->left->threshold == -1) {
+		root->left = rotateLeft(root->left);
+		return rotateRight(root);
+	}
+}
+else if (root->threshold == -2) {
+	if (root->right->threshold == 1) {
+		root->right = rotateRight(root->right);
+		return rotateLeft(root);
+	}
+	else if (root->right->threshold == -1) {
+		return rotateLeft(root);
+	}
+}
+
+return root;
+
+}
 //CDC_Report  N/A   Sex    Age     Race     Hosp     ICU    Death    MedCond
 int main() {
+	AVL_Tree* test_tree = new AVL_Tree;
+
 	//Map that holds cases
-	unordered_map<string, vector<AVL_Tree::Case>> caseList;
+	unordered_map<string, vector<Case>> caseListmap;
 	//Temporary Case object
-	AVL_Tree::Case temp;
+	Case temp;
 	//creates an ifstream object
 	ifstream file;
 	// Load the states
 	string name;
-
 	//Gets data for State data
 	file.open("cases.csv");
 	if (file.is_open()) {
@@ -53,9 +124,12 @@ int main() {
 			getline(file, temp.icu, ',');
 			getline(file, temp.death, ',');
 			getline(file, temp.medicalCondition, '\n');
-
 			//Places data into a map
-			caseList[temp.age].push_back(temp);			
+			char tempchar = temp.dateCDC.at(0);
+			temp.month = int(tempchar);
+			caseListmap[temp.age].push_back(temp);
+			Case* tempptr = &temp; //pointer to case object
+			test_tree->root=test_tree->insert_AVL(test_tree->root,  tempptr);
 		}
 	}
 }
