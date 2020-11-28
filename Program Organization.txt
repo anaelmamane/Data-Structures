@@ -1,0 +1,25 @@
+Program:
+
+Look for cases on a specific date
+> Use a map with key being date and value being vector of cases
+> And for comparison we could use an AVL (sorted by date) which 
+  initially searches for the date
+
+
+
+Look for cases based on age:
+> Iterate through whole AVL tree and print/save the Cases that match
+To see risk, iterate through previous vector and see percentage of
+deaths/hospitalizations
+
+
+Look for cases based on race:
+> Iterate through whole AVL tree and print/save the Cases that match
+
+
+Look for cases base one race and age:
+> Make a map with key being race+age and a value which is a vector of
+Cases. Find percentage of hospitalization/death. among each key
+
+
+
