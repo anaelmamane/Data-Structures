@@ -19,7 +19,7 @@ Look for cases based on race:
 
 Look for cases base one race and age:
 > Make a map with key being race+age and a value which is a vector of
-Cases. Find percentage of hospitalization/death. among each key
+Cases. Find percentage of hospitalization/death among each vector
 
 
 
