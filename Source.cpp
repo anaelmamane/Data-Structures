@@ -5,12 +5,11 @@
 #include <fstream>
 #include <algorithm>
 #include <iomanip>
-#include <string>
 #include <unordered_map>
 
 using namespace std;
 struct Case {
-	 string dateCDC; //Holds the data the CDC report data
+	string dateCDC; //Holds the data the CDC report data
 	int month; //Holds the data the CDC report data
 	string sex; //Holds the sex of the person
 	string age; //Holds the age range of the person
@@ -26,7 +25,7 @@ struct Case {
 class AVL_Tree {
 public:
 	Case* insert_AVL(Case* root, Case* newcase);
-	Case* root;
+	Case* root = nullptr;
 	int calculateThreshold(Case* case_);
 	int height(Case* case_);
 	Case* rotateRight(Case* case_);
@@ -61,39 +60,40 @@ int AVL_Tree::calculateThreshold(Case* case_) {
 }
 
 Case* AVL_Tree::insert_AVL(Case* root, Case* newcase) {
-if (root == nullptr) {
-	return newcase;
-}
-else if (newcase->dateCDC < root->dateCDC) {
-	root->left = insert_AVL(root->left, newcase);
+	if (root == nullptr) {
+		return newcase;
+	}
+	else if (newcase->dateCDC < root->dateCDC) {
+		root->left = insert_AVL(root->left, newcase);
+		calculateThreshold(root);
+	}
+	else {
+		root->right = insert_AVL(root->right, newcase);
+		calculateThreshold(root);
+
+	}
+
+	//balance at each insertion
 	calculateThreshold(root);
-}
-else {
-	root->right = insert_AVL(root->right, newcase);
-	calculateThreshold(root);
-}
-
-//used the table from the AVL trees powerpoint that describes the rotation done at each instance of the threshold.
-
-if (root->threshold == 2) {
-	if (root->left->threshold == 1)
-		return rotateRight(root);
-	else if (root->left->threshold == -1) {
-		root->left = rotateLeft(root->left);
-		return rotateRight(root);
+	if (root->threshold == 2) {
+		if (root->left->threshold == 1)
+			return rotateRight(root);
+		else if (root->left->threshold == -1) {
+			root->left = rotateLeft(root->left);
+			return rotateRight(root);
+		}
 	}
-}
-else if (root->threshold == -2) {
-	if (root->right->threshold == 1) {
-		root->right = rotateRight(root->right);
-		return rotateLeft(root);
+	else if (root->threshold == -2) {
+		if (root->right->threshold == 1) {
+			root->right = rotateRight(root->right);
+			return rotateLeft(root);
+		}
+		else if (root->right->threshold == -1) {
+			return rotateLeft(root);
+		}
 	}
-	else if (root->right->threshold == -1) {
-		return rotateLeft(root);
-	}
-}
 
-return root;
+	return root;
 
 }
 //CDC_Report  N/A   Sex    Age     Race     Hosp     ICU    Death    MedCond
@@ -101,9 +101,8 @@ int main() {
 	AVL_Tree* test_tree = new AVL_Tree;
 
 	//Map that holds cases
-	unordered_map<string, vector<Case>> caseListmap;
+	unordered_map<string, vector<Case*>> caseListmap;
 	//Temporary Case object
-	Case temp;
 	//creates an ifstream object
 	ifstream file;
 	// Load the states
@@ -113,23 +112,25 @@ int main() {
 	if (file.is_open()) {
 		//Ignores title lines
 		getline(file, name);
-
+		string datecdc;
+		int counter = 0;
 		//Loads data from file into map using commma as delimeter
-		while (getline(file, temp.dateCDC, ',')) {
+		while (getline(file, datecdc, ',')) {
+			Case* temp = new Case;
+			temp->dateCDC = datecdc;
 			getline(file, name, ',');
-			getline(file, temp.sex, ',');
-			getline(file, temp.age, ',');
-			getline(file, temp.race, ',');
-			getline(file, temp.hospitalization, ',');
-			getline(file, temp.icu, ',');
-			getline(file, temp.death, ',');
-			getline(file, temp.medicalCondition, '\n');
+			getline(file, temp->sex, ',');
+			getline(file, temp->age, ',');
+			getline(file, temp->race, ',');
+			getline(file, temp->hospitalization, ',');
+			getline(file, temp->icu, ',');
+			getline(file, temp->death, ',');
+			getline(file, temp->medicalCondition, '\n');
 			//Places data into a map
-			char tempchar = temp.dateCDC.at(0);
-			temp.month = int(tempchar);
-			caseListmap[temp.age].push_back(temp);
-			Case* tempptr = &temp; //pointer to case object
-			test_tree->root=test_tree->insert_AVL(test_tree->root,  tempptr);
+			char tempchar = temp->dateCDC.at(0);
+			temp->month = int(tempchar);
+			caseListmap[temp->age].push_back(temp);
+			test_tree->root = test_tree->insert_AVL(test_tree->root, temp);
 		}
 	}
 }
