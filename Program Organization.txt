@@ -6,22 +6,20 @@ integers month, day. The user will input a date, and all cases on that
 date we be output. Each "Node" of the AVL Tree will be a vector that holds
 all cases on that date.
 Options:
-Check hospitalizations
-Check death rate
+Check hospitalizations per date
+Check death rate per date
 
 Look for cases based on age:
-> Iterate through whole AVL tree and print/save the Cases that match
-To see risk, iterate through previous vector and see percentage of
-deaths/hospitalizations
+> Make a map that holds all ages
 
 
 Look for cases based on race:
-> Iterate through whole AVL tree and print/save the Cases that match
+> Make a map that holds all races
 
 
 Look for cases base one race and age:
-> Make a map with key being race+age and a value which is a vector of
-Cases. Find percentage of hospitalization/death among each vector
+> Use two maps in conjunction to figure out the risk factor based on age
+and race
 
 
 

@@ -34,12 +34,12 @@ struct Node {
 	Node* right = nullptr;
 
 	//Data for Node
-	uint8_t day;
-	uint8_t month;
+	uint8_t day = 0;
+	uint8_t month = 0;
 
 	vector<Case*> cases;
 
-	int threshold;
+	int threshold = 0;
 };
 
 class AVL_Tree {
@@ -168,8 +168,7 @@ int main() {
 		getline(file, name);
 		string date;
 		int counter = 0;
-		uint8_t tDay;
-		uint8_t tMonth;
+
 		//Loads data from file into map using commma as delimeter
 		while (getline(file, date, ',')) {
 			//Creates node for tree using the Node object
