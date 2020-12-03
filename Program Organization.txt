@@ -1,11 +1,13 @@
 Program:
 
 Look for cases on a specific date
-> Use a map with key being date and value being vector of cases
-> And for comparison we could use an AVL (sorted by date) which 
-  initially searches for the date
-
-
+> Use an AVL tree with the key being a date. The key is composed of
+integers month, day. The user will input a date, and all cases on that
+date we be output. Each "Node" of the AVL Tree will be a vector that holds
+all cases on that date.
+Options:
+Check hospitalizations
+Check death rate
 
 Look for cases based on age:
 > Iterate through whole AVL tree and print/save the Cases that match
