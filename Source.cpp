@@ -35,8 +35,8 @@ struct Node {
 	Node* right = nullptr;
 
 	//Data for Node
-	uint8_t day = 0;
-	uint8_t month = 0;
+	short day = 0;
+	short month = 0;
 
 	vector<Case*> cases;
 
@@ -105,26 +105,27 @@ Node* AVL_Tree::insert_AVL(Node* root, Node* newNode, Case* newCase) {
 	//If Case date is less than current root, go left
 	else if (newNode->month < root->month) { //month
 		root->left = insert_AVL(root->left, newNode, newCase);
-		calculateThreshold(root);
+		//calculateThreshold(root);
 	}
 	//If Case data is greater than current root, go right
 	else if (newNode->month > root->month) { //month >
 		root->right = insert_AVL(root->right, newNode, newCase);
-		calculateThreshold(root);
+		//calculateThreshold(root);
 	}
 	else { //If months equal
 		if (newNode->day < root->day) {
 			root->left = insert_AVL(root->left, newNode, newCase);
-			calculateThreshold(root);
+			//calculateThreshold(root);
 		}
 		else if (newNode->day > root->day) {
 			root->right = insert_AVL(root->right, newNode, newCase);
-			calculateThreshold(root);
+			//calculateThreshold(root);
 		}
 		//Both day and month equal
 		else {
 			root->cases.push_back(newCase);
-			size++;
+			//size++;
+			return root;
 		}
 	}
 
@@ -160,25 +161,26 @@ vector<Case*> AVL_Tree::Search(int month, int date, Node* root) {
 	}
 	//if month is less than
 	else if (root->month < month) {
-		found = Search(month, date, root->left);
+		found = Search(month, date, root->right);
 	}
 	//month greater than
 	else if (root->month > month) {
-		found = Search(month, date, root->right);
+		found = Search(month, date, root->left);
 	}
 	//equal month
 	else {
 		//day less than
 		if (root->day < date) {
-			found =	Search(month, date, root->left);
+			found = Search(month, date, root->right);
 		}
 		//day greater than
 		else if (root->day > date) {
-			found = Search(month, date, root->right);
+			found = Search(month, date, root->left);
 		}
 		//if everything is equal
 		else {
-			found = root->cases;
+			//cout << "Found root: " << root->month << "   " << root->day << endl;
+ 			found = root->cases;
 		}
 	}
 	return found;
@@ -206,27 +208,27 @@ int main() {
 		//Loads data from file into map using commma as delimeter
 		while (getline(file, date, ',')) {
 			//Creates node for tree using the Node object
-			Node* rootNode = new Node;
+			Node* newNode = new Node;
 			//Uses
-			Case* temp = new Case;
+			Case* newCase = new Case;
 			//temp->dateCDC = date;
 
 			//   Date format   ##/##/#### saved in datecdc
 			//Grabs month and saves it as a 8 bit unsigned int
-			rootNode->month = (uint8_t)stoi(date.substr(0, date.find('/')));
+			newNode->month = (short)stoi(date.substr(0, date.find('/')));
 
 			//Grabs day and saves it as a 8 bit unsigned int
-			rootNode->day = (uint8_t)stoi(date.substr(date.find('/') + 1, date.size() - 7));
+			newNode->day = (short)stoi(date.substr(date.find('/') + 1, date.size() - 7));
 
 
 			getline(file, name, ',');
-			getline(file, temp->sex, ',');
-			getline(file, temp->age, ',');
-			getline(file, temp->race, ',');
-			getline(file, temp->hospitalization, ',');
-			getline(file, temp->icu, ',');
-			getline(file, temp->death, ',');
-			getline(file, temp->medicalCondition, '\n');
+			getline(file, newCase->sex, ',');
+			getline(file, newCase->age, ',');
+			getline(file, newCase->race, ',');
+			getline(file, newCase->hospitalization, ',');
+			getline(file, newCase->icu, ',');
+			getline(file, newCase->death, ',');
+			getline(file, newCase->medicalCondition, '\n');
 
 
 
@@ -234,9 +236,11 @@ int main() {
 			//char tempchar = temp->dateCDC.at(0);
 			//temp->month = int(tempchar);
 			//caseListmap[temp->age].push_back(temp);
-			test_tree->root = test_tree->insert_AVL(test_tree->root, rootNode, temp);
+			test_tree->root = test_tree->insert_AVL(test_tree->root, newNode, newCase);
 		}
 	}
+
+	cout << "Size of tree: " << test_tree->size << endl;
 
 	//main menu
 	//bool that runs the while loop
@@ -248,7 +252,7 @@ int main() {
 	while (loop) {
 		cout << "Main Menu" << endl;
 		//input 2 might not be used as some inputs only require one input
-		int input1, input2;
+		short input1, input2;
 
 		//Menu option
 		int option;
@@ -273,8 +277,11 @@ int main() {
 			cout << "Date: ";
 			cin >> input2;
 
+			cout << input1 << " " << input2 << endl;
+
 			//vector of nodes that matches the searched for date
 			matchDate = test_tree->Search(input1, input2, test_tree->root);
+			//cout << "vector return size: " << matchDate.size();
 			//count num of deaths and num of hospitalizations - ADD TO LATER IF WANT
 			for (int i = 0; i < matchDate.size(); i++) {
 				if (matchDate[i]->death == "Yes") {
@@ -284,7 +291,7 @@ int main() {
 					hosp++;
 				}
 			}
-			//cout << (int)test_tree->root->month << " " << (int)test_tree->root->day;
+			//cout << "root: " << test_tree->root->month << " " << test_tree->root->day << endl;
 			//print stats
 			cout << "Number of Deaths on this Date: " << deaths << endl;
 			cout << "Number of Hospitalizations on this Date: " << hosp << endl;
@@ -294,20 +301,20 @@ int main() {
 			hosp = 0;
 
 			break;
-		/*case 2:
-			break;
-		case 3:
-			break;
-		case 4:
-			break;
-		case 5:
-			break;
-		case 6:
-			break;
-		case 7:
-			break;
-		case 8:
-			break;*/
+			/*case 2:
+				break;
+			case 3:
+				break;
+			case 4:
+				break;
+			case 5:
+				break;
+			case 6:
+				break;
+			case 7:
+				break;
+			case 8:
+				break;*/
 		case 9:
 			loop = false;
 			break;
