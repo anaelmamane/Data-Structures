@@ -241,13 +241,14 @@ int main() {
 		}
 	}
 
-	cout << "Size of tree: " << test_tree->size << endl;
+	//cout << "Size of tree: " << test_tree->size << endl;
 
 	//main menu
 	//bool that runs the while loop
 	bool loop = true;
 
 	while (loop) {
+		cout << "============================== Welcome to COVID WATCH ==============================\n";
 		//vector that holds the cases that match the date. Had to declare here for some reason???
 		vector<Case*> matchDate;
 		//int for deaths and hospitalizations
@@ -324,16 +325,16 @@ int main() {
 				key = "80+ Years";
 
 
-			for (int i = 0;i < caseListmap[key].size();i++) {
+			for (int i = 0; i < caseListmap[key].size(); i++) {
 				if (caseListmap[key].at(i)->hospitalization == "Yes")
 					hosp++;
 				if (caseListmap[key].at(i)->death == "Yes")
 					deaths++;
 			}
 			cout << "Number of fatalities in your age range: " << deaths << endl;
-			cout << "Percentage: " << ((float)deaths / caseListmap[key].size())*10.0 << fixed << setprecision(3) << " %\n";
+			cout << "Percentage of deaths among chosen age range: " << ((float)deaths / caseListmap[key].size()) * 10.0 << fixed << setprecision(3) << " %\n";
 			cout << "Number of Hospitalizations in your age range: " << hosp << endl;
-			cout << "Percentage: " << ((float)hosp / caseListmap[key].size())*10.0 << fixed << setprecision(3) << " %\n";
+			cout << "Percentage of hospitalizations among chosen age range: " << ((float)hosp / caseListmap[key].size()) * 10.0 << fixed << setprecision(3) << " %\n";
 
 			break;
 		case 3:
@@ -362,19 +363,25 @@ int main() {
 				key = "White; Non-Hispanic";
 			else if (raceinput == 7)
 				key = "Multiple/Other; Non-Hispanic";
-			
-			for (int i = 0;i < caseListmapRace[key].size();i++) {
+
+			for (int i = 0; i < caseListmapRace[key].size(); i++) {
 				if (caseListmapRace[key].at(i)->hospitalization == "Yes")
 					hosp++;
 				if (caseListmapRace[key].at(i)->death == "Yes")
 					deaths++;
 			}
 			cout << "Number of fatalities in your race: " << deaths << endl;
+			cout << "Percentage of deaths among chosen race: " <<
+				((float)deaths / caseListmapRace[key].size()) * 10.0 << fixed << setprecision(3) << " %\n";
 			cout << "Number of Hospitalizations in your race: " << hosp << endl;
-			
-			/*case 4:
+			cout << "Percentage of hospitalizations among chosen race: " <<
+				((float)hosp / caseListmapRace[key].size()) * 10.0 << fixed << setprecision(3) << " %\n";
+			break;
+			case 4:
+
+
 				break;
-			case 5:
+			/*case 5:
 				break;
 			case 6:
 				break;
@@ -386,6 +393,9 @@ int main() {
 			loop = false;
 			break;
 		}
+		cout << endl;
+		cout << endl;
+		cout << endl;
 	}
 	return 0;
 }
