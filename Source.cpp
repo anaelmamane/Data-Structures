@@ -180,7 +180,7 @@ vector<Case*> AVL_Tree::Search(int month, int date, Node* root) {
 		//if everything is equal
 		else {
 			//cout << "Found root: " << root->month << "   " << root->day << endl;
- 			found = root->cases;
+			found = root->cases;
 		}
 	}
 	return found;
@@ -191,7 +191,8 @@ int main() {
 	AVL_Tree* test_tree = new AVL_Tree;
 
 	//Map that holds cases
-	//unordered_map<string, vector<Case*>> caseListmap;
+	unordered_map<string, vector<Case*>> caseListmap;
+	unordered_map<string, vector<Case*>> caseListmapRace;
 	//Temporary Case object
 	//creates an ifstream object
 	ifstream file;
@@ -230,12 +231,9 @@ int main() {
 			getline(file, newCase->death, ',');
 			getline(file, newCase->medicalCondition, '\n');
 
-
-
 			//Places data into a map
 			//char tempchar = temp->dateCDC.at(0);
-			//temp->month = int(tempchar);
-			//caseListmap[temp->age].push_back(temp);
+			caseListmap[newCase->age].push_back(newCase);
 			test_tree->root = test_tree->insert_AVL(test_tree->root, newNode, newCase);
 		}
 	}
@@ -249,6 +247,7 @@ int main() {
 	vector<Case*> matchDate;
 	//int for deaths and hospitalizations
 	int deaths = 0, hosp = 0;
+
 	while (loop) {
 		cout << "Main Menu" << endl;
 		//input 2 might not be used as some inputs only require one input
@@ -258,7 +257,10 @@ int main() {
 		int option;
 
 		//1. month and date
-		cout << "1. Month and Date" << endl;
+		cout << "1. Month and Day" << endl;
+		cout << "2. Age" << endl;
+		cout << "3. Race" << endl;
+
 
 		//2, 3, 4, 5, etc
 
@@ -268,6 +270,9 @@ int main() {
 		//receiving the input
 		cin >> option;
 
+		int ageinput;
+		int raceinput;
+		string key;
 		//make a switch statement that checks option
 		switch (option) {
 		case 1:
@@ -301,11 +306,51 @@ int main() {
 			hosp = 0;
 
 			break;
-			/*case 2:
-				break;
+			case 2:
+				cout << "Input your age" << endl;
+				cin >> ageinput;
+				if (ageinput <= 9)
+					key = "0 - 9 Years";
+				else if (ageinput <= 19)
+					key = "10 - 19 Years";
+				else if (ageinput <= 29)
+					key = "20 - 29 Years";
+				else if (ageinput <= 39)
+					key = "30 - 39 Years";
+				else if (ageinput <= 49)
+					key = "40 - 49 Years";
+				else if (ageinput <= 59)
+					key = "50 - 59 Years";
+				else if (ageinput <= 69)
+					key = "60 - 69 Years";
+				else if (ageinput <= 79)
+					key = "70 - 79 Years";
+				else if (ageinput>=80)
+					key = "80+ Years";
+
+
+				for (int i = 0;i < caseListmap[key].size();i++) {
+					if (caseListmap[key].at(i)->hospitalization == "Yes")
+						hosp++;
+					if (caseListmap[key].at(i)->death == "Yes")
+						deaths++;
+				}
+				cout << "Number of fatalities in your age range: " << deaths << endl;
+				cout << "Number of Hospitalizations in your age range: " << hosp << endl;
+
+					break;
 			case 3:
-				break;
-			case 4:
+				cout << "Input your Race:" << endl;
+				cout << "1. Hispanic/Latino"<< endl;
+				cout << "2. Black, Non-Hispanic" << endl;
+				cout << "3. American Indian/Alaska Native, Non-Hispanic" << endl;
+				cout << "4. Asian, Non-Hispanic" << endl;
+				cout << "5. Native Hawaiian/ Other Pacific Islander, Non-Hispanic" << endl;
+				cout << "6. White, Non- Hispanic" << endl;
+				cout << "7. Multiple/Other" << endl;
+				cin >> raceinput;
+
+			/*case 4:
 				break;
 			case 5:
 				break;
