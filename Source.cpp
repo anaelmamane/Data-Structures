@@ -194,6 +194,7 @@ int main() {
 	unordered_map<string, vector<Case*>> caseAgeList;
 	//Map that holds cases bases on race
 	unordered_map<string, vector<Case*>> caseRaceList;
+	unordered_map<string, vector<Case*>> caseListmapSex;
 	//Map that holds cases bases on age for case 4
 	unordered_map<string, vector<Case*>> temporaryAgeMap;
 	//Temporary Case object
@@ -239,6 +240,8 @@ int main() {
 			caseAgeList[newCase->age].push_back(newCase);
 			//map that sorted by race
 			caseRaceList[newCase->race].push_back(newCase);
+			//map sorted by sex
+			caseListmapSex[newCase->sex].push_back(newCase);
 			//tree sorted by date
 			test_tree->root = test_tree->insert_AVL(test_tree->root, newNode, newCase);
 		}
@@ -279,6 +282,7 @@ int main() {
 
 		int ageinput;
 		int raceinput;
+		int sexinput;
 		string key;
 		string key1;
 		string key2;
@@ -312,7 +316,7 @@ int main() {
 
 			break;
 		case 2:
-			cout << "Input your age" << endl;
+			cout << "Input your Age: " << endl;
 			cin >> ageinput;
 			if (ageinput <= 9)
 				key = "0 - 9 Years";
@@ -386,11 +390,32 @@ int main() {
 			cout << "Percentage of hospitalizations among chosen race: " <<
 				((float)hosp / caseRaceList[key].size()) * 10.0 << fixed << setprecision(3) << " %\n";
 			break;
-			case 4:
-				
+		case 4:
+			cout << "Input your Sex: " << endl;
+			cout << "1. Male" << endl;
+			cout << "2. Female" << endl;
+			cin >> sexinput;
 
 
-				break;
+			break;				if (sexinput == 1)
+				key = "Male";
+			else if (sexinput == 2)
+				key = "Female";
+
+			for (int i = 0; i < caseListmapSex[key].size(); i++) {
+				if (caseListmapSex[key].at(i)->hospitalization == "Yes")
+					hosp++;
+				if (caseListmapSex[key].at(i)->death == "Yes")
+					deaths++;
+			}
+			cout << "Number of fatalities in your sex: " << deaths << endl;
+			cout << "Percentage of deaths among chosen sex: " <<
+				((float)deaths / caseListmapSex[key].size()) * 10.0 << fixed << setprecision(3) << " %\n";
+			cout << "Number of Hospitalizations in your race: " << hosp << endl;
+			cout << "Percentage of hospitalizations among chosen race: " <<
+				((float)hosp / caseListmapSex[key].size()) * 10.0 << fixed << setprecision(3) << " %\n";
+
+			break;
 			case 5:
 				cout << "Input your Race: " << endl;
 				cout << "1. Hispanic/Latino" << endl;
