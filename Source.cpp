@@ -190,9 +190,11 @@ vector<Case*> AVL_Tree::Search(int month, int date, Node* root) {
 int main() {
 	AVL_Tree* test_tree = new AVL_Tree;
 
-	//Map that holds cases
-	unordered_map<string, vector<Case*>> caseListmap;
-	unordered_map<string, vector<Case*>> caseListmapRace;
+	//Map that holds cases bases on age
+	unordered_map<string, vector<Case*>> caseAgeList;
+	//Map that holds cases bases on race
+	unordered_map<string, vector<Case*>> caseRaceList;
+	//Map that holds cases bases on age for case 4
 	unordered_map<string, vector<Case*>> temporaryAgeMap;
 	//Temporary Case object
 	//creates an ifstream object
@@ -234,9 +236,9 @@ int main() {
 
 			//Places data into a map
 			//map sorted by age
-			caseListmap[newCase->age].push_back(newCase);
+			caseAgeList[newCase->age].push_back(newCase);
 			//map that sorted by race
-			caseListmapRace[newCase->race].push_back(newCase);
+			caseRaceList[newCase->race].push_back(newCase);
 			//tree sorted by date
 			test_tree->root = test_tree->insert_AVL(test_tree->root, newNode, newCase);
 		}
@@ -255,7 +257,7 @@ int main() {
 		//vector that holds the cases that match the date. Had to declare here for some reason???
 		vector<Case*> matchDate;
 		//int for deaths and hospitalizations
-		int deaths = 0, hosp = 0;
+		short deaths = 0, hosp = 0;
 
 		cout << "Main Menu" << endl;
 		//input 2 might not be used as some inputs only require one input
@@ -332,16 +334,16 @@ int main() {
 				key = "80+ Years";
 
 
-			for (int i = 0; i < caseListmap[key].size(); i++) {
-				if (caseListmap[key].at(i)->hospitalization == "Yes")
+			for (int i = 0; i < caseAgeList[key].size(); i++) {
+				if (caseAgeList[key].at(i)->hospitalization == "Yes")
 					hosp++;
-				if (caseListmap[key].at(i)->death == "Yes")
+				if (caseAgeList[key].at(i)->death == "Yes")
 					deaths++;
 			}
 			cout << "Number of fatalities in your age range: " << deaths << endl;
-			cout << "Percentage of deaths among chosen age range: " << ((float)deaths / caseListmap[key].size()) * 10.0 << fixed << setprecision(3) << " %\n";
+			cout << "Percentage of deaths among chosen age range: " << ((float)deaths / caseAgeList[key].size()) * 10.0 << fixed << setprecision(3) << " %\n";
 			cout << "Number of Hospitalizations in your age range: " << hosp << endl;
-			cout << "Percentage of hospitalizations among chosen age range: " << ((float)hosp / caseListmap[key].size()) * 10.0 << fixed << setprecision(3) << " %\n";
+			cout << "Percentage of hospitalizations among chosen age range: " << ((float)hosp / caseAgeList[key].size()) * 10.0 << fixed << setprecision(3) << " %\n";
 
 			break;
 		case 3:
@@ -371,18 +373,18 @@ int main() {
 			else if (raceinput == 7)
 				key = "Multiple/Other; Non-Hispanic";
 
-			for (int i = 0; i < caseListmapRace[key].size(); i++) {
-				if (caseListmapRace[key].at(i)->hospitalization == "Yes")
+			for (int i = 0; i < caseRaceList[key].size(); i++) {
+				if (caseRaceList[key].at(i)->hospitalization == "Yes")
 					hosp++;
-				if (caseListmapRace[key].at(i)->death == "Yes")
+				if (caseRaceList[key].at(i)->death == "Yes")
 					deaths++;
 			}
 			cout << "Number of fatalities in your race: " << deaths << endl;
 			cout << "Percentage of deaths among chosen race: " <<
-				((float)deaths / caseListmapRace[key].size()) * 10.0 << fixed << setprecision(3) << " %\n";
+				((float)deaths / caseRaceList[key].size()) * 10.0 << fixed << setprecision(3) << " %\n";
 			cout << "Number of Hospitalizations in your race: " << hosp << endl;
 			cout << "Percentage of hospitalizations among chosen race: " <<
-				((float)hosp / caseListmapRace[key].size()) * 10.0 << fixed << setprecision(3) << " %\n";
+				((float)hosp / caseRaceList[key].size()) * 10.0 << fixed << setprecision(3) << " %\n";
 			break;
 			case 4:
 				
@@ -439,8 +441,8 @@ int main() {
 
 
 				//Adds all cases with age
-				for (int i = 0; i < caseListmapRace[key1].size(); i++) {
-					temporaryAgeMap[caseListmapRace[key1].at(i)->age].push_back(caseListmapRace[key1].at(i));
+				for (int i = 0; i < caseRaceList[key1].size(); i++) {
+					temporaryAgeMap[caseRaceList[key1].at(i)->age].push_back(caseRaceList[key1].at(i));
 				}
 
 				for (int i = 0; i < temporaryAgeMap[key2].size(); i++) {
