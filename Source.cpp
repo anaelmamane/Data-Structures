@@ -193,6 +193,7 @@ int main() {
 	//Map that holds cases
 	unordered_map<string, vector<Case*>> caseListmap;
 	unordered_map<string, vector<Case*>> caseListmapRace;
+	unordered_map<string, vector<Case*>> caseListmapSex;
 	//Temporary Case object
 	//creates an ifstream object
 	ifstream file;
@@ -236,6 +237,8 @@ int main() {
 			caseListmap[newCase->age].push_back(newCase);
 			//map that sorted by race
 			caseListmapRace[newCase->race].push_back(newCase);
+			//map sorted by sex
+			caseListmapSex[newCase->sex].push_back(newCase);
 			//tree sorted by date
 			test_tree->root = test_tree->insert_AVL(test_tree->root, newNode, newCase);
 		}
@@ -276,6 +279,7 @@ int main() {
 
 		int ageinput;
 		int raceinput;
+		int sexinput;
 		string key;
 		//make a switch statement that checks option
 		switch (option) {
@@ -307,7 +311,7 @@ int main() {
 
 			break;
 		case 2:
-			cout << "Input your age" << endl;
+			cout << "Input your Age: " << endl;
 			cin >> ageinput;
 			if (ageinput <= 9)
 				key = "0 - 9 Years";
@@ -381,10 +385,32 @@ int main() {
 			cout << "Percentage of hospitalizations among chosen race: " <<
 				((float)hosp / caseListmapRace[key].size()) * 10.0 << fixed << setprecision(3) << " %\n";
 			break;
-			case 4:
 
+		case 4:
+			cout << "Input your Sex: " << endl;
+			cout << "1. Male" << endl;
+			cout << "2. Female" << endl;
+			cin >> sexinput;
 
-				break;
+			if (sexinput == 1)
+				key = "Male";
+			else if (sexinput == 2)
+				key = "Female";
+
+			for (int i = 0; i < caseListmapSex[key].size(); i++) {
+				if (caseListmapSex[key].at(i)->hospitalization == "Yes")
+					hosp++;
+				if (caseListmapSex[key].at(i)->death == "Yes")
+					deaths++;
+			}
+			cout << "Number of fatalities in your sex: " << deaths << endl;
+			cout << "Percentage of deaths among chosen sex: " <<
+				((float)deaths / caseListmapSex[key].size()) * 10.0 << fixed << setprecision(3) << " %\n";
+			cout << "Number of Hospitalizations in your race: " << hosp << endl;
+			cout << "Percentage of hospitalizations among chosen race: " <<
+				((float)hosp / caseListmapSex[key].size()) * 10.0 << fixed << setprecision(3) << " %\n";
+
+			break;
 			/*case 5:
 				break;
 			case 6:
