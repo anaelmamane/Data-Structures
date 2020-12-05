@@ -7,6 +7,7 @@
 #include <iomanip>
 #include <unordered_map>
 #include <cstdint>
+#include <vector>
 
 using namespace std;
 
@@ -54,7 +55,7 @@ public:
 	Node* rotateRight(Node* newNode);
 	Node* rotateLeft(Node* newNode);
 	//Search for a case
-
+	vector<Case*> Search(int month, int date, Node* root);
 
 };
 
@@ -148,8 +149,41 @@ Node* AVL_Tree::insert_AVL(Node* root, Node* newNode, Case* newCase) {
 	}
 
 	return root;
-
 }
+
+vector<Case*> AVL_Tree::Search(int month, int date, Node* root) {
+	vector<Case*> found;
+	//if not found
+	if (root == nullptr) {
+		vector<Case*> empty;
+		return empty;
+	}
+	//if month is less than
+	else if (root->month < month) {
+		found = Search(month, date, root->left);
+	}
+	//month greater than
+	else if (root->month > month) {
+		found = Search(month, date, root->right);
+	}
+	//equal month
+	else {
+		//day less than
+		if (root->day < date) {
+			found =	Search(month, date, root->left);
+		}
+		//day greater than
+		else if (root->day > date) {
+			found = Search(month, date, root->right);
+		}
+		//if everything is equal
+		else {
+			found = root->cases;
+		}
+	}
+	return found;
+}
+
 //CDC_Report  N/A   Sex    Age     Race     Hosp     ICU    Death    MedCond
 int main() {
 	AVL_Tree* test_tree = new AVL_Tree;
@@ -203,7 +237,81 @@ int main() {
 			test_tree->root = test_tree->insert_AVL(test_tree->root, rootNode, temp);
 		}
 	}
-	cout << "Size of tree: " << test_tree->size;
 
+	//main menu
+	//bool that runs the while loop
+	bool loop = true;
+	//vector that holds the cases that match the date. Had to declare here for some reason???
+	vector<Case*> matchDate;
+	//int for deaths and hospitalizations
+	int deaths = 0, hosp = 0;
+	while (loop) {
+		cout << "Main Menu" << endl;
+		//input 2 might not be used as some inputs only require one input
+		int input1, input2;
+
+		//Menu option
+		int option;
+
+		//1. month and date
+		cout << "1. Month and Date" << endl;
+
+		//2, 3, 4, 5, etc
+
+		//ending the loop & program
+		cout << "9. Quit" << endl;
+
+		//receiving the input
+		cin >> option;
+
+		//make a switch statement that checks option
+		switch (option) {
+		case 1:
+			cout << "Insert a Month then a Date" << endl;
+			cout << "Month: ";
+			cin >> input1;
+			cout << "Date: ";
+			cin >> input2;
+
+			//vector of nodes that matches the searched for date
+			matchDate = test_tree->Search(input1, input2, test_tree->root);
+			//count num of deaths and num of hospitalizations - ADD TO LATER IF WANT
+			for (int i = 0; i < matchDate.size(); i++) {
+				if (matchDate[i]->death == "Yes") {
+					deaths++;
+				}
+				if (matchDate[i]->hospitalization == "Yes") {
+					hosp++;
+				}
+			}
+			//cout << (int)test_tree->root->month << " " << (int)test_tree->root->day;
+			//print stats
+			cout << "Number of Deaths on this Date: " << deaths << endl;
+			cout << "Number of Hospitalizations on this Date: " << hosp << endl;
+
+			//ready for next loop
+			deaths = 0;
+			hosp = 0;
+
+			break;
+		/*case 2:
+			break;
+		case 3:
+			break;
+		case 4:
+			break;
+		case 5:
+			break;
+		case 6:
+			break;
+		case 7:
+			break;
+		case 8:
+			break;*/
+		case 9:
+			loop = false;
+			break;
+		}
+	}
 	return 0;
 }
