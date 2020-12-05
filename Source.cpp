@@ -232,8 +232,11 @@ int main() {
 			getline(file, newCase->medicalCondition, '\n');
 
 			//Places data into a map
-			//char tempchar = temp->dateCDC.at(0);
+			//map sorted by age
 			caseListmap[newCase->age].push_back(newCase);
+			//map that sorted by race
+			caseListmapRace[newCase->race].push_back(newCase);
+			//tree sorted by date
 			test_tree->root = test_tree->insert_AVL(test_tree->root, newNode, newCase);
 		}
 	}
@@ -271,7 +274,7 @@ int main() {
 		string key;
 		//make a switch statement that checks option
 		switch (option) {
-		case 1: //Search by date
+		case 1:
 			cout << "Insert a Month then a Date" << endl;
 			cout << "Month: ";
 			cin >> input1;
@@ -298,7 +301,7 @@ int main() {
 			cout << "Number of Hospitalizations on this Date: " << hosp << endl;
 
 			break;
-		case 2: //Search by age
+		case 2:
 			cout << "Input your age" << endl;
 			cin >> ageinput;
 			if (ageinput <= 9)
@@ -321,7 +324,7 @@ int main() {
 				key = "80+ Years";
 
 
-			for (int i = 0; i < caseListmap[key].size(); i++) {
+			for (int i = 0;i < caseListmap[key].size();i++) {
 				if (caseListmap[key].at(i)->hospitalization == "Yes")
 					hosp++;
 				if (caseListmap[key].at(i)->death == "Yes")
@@ -331,21 +334,44 @@ int main() {
 			cout << "Number of Hospitalizations in your age range: " << hosp << endl;
 
 			break;
-		case 3: //Search race
+		case 3:
 			cout << "Input your Race: " << endl;
 			cout << "1. Hispanic/Latino" << endl;
-			cout << "2. Black, Non-Hispanic" << endl;
-			cout << "3. American Indian/Alaska Native, Non-Hispanic" << endl;
-			cout << "4. Asian, Non-Hispanic" << endl;
-			cout << "5. Native Hawaiian/ Other Pacific Islander, Non-Hispanic" << endl;
-			cout << "6. White, Non-Hispanic" << endl;
+			cout << "2. Black; Non-Hispanic" << endl;
+			cout << "3. American Indian/Alaska Native; Non-Hispanic" << endl;
+			cout << "4. Asian; Non-Hispanic" << endl;
+			cout << "5. Native Hawaiian/Other Pacific Islander; Non-Hispanic" << endl;
+			cout << "6. White; Non-Hispanic" << endl;
 			cout << "7. Multiple/Other" << endl;
 			cin >> raceinput;
-			break;
 
-		case 4: //Race,Age
-			break;
-			/*
+			//assign a key for the race map
+			if (raceinput == 1)
+				key = "Hispanic/Latino";
+			else if (raceinput == 2)
+				key = "Black; Non-Hispanic";
+			else if (raceinput == 3)
+				key = "American Indian/Alaska Native; Non-Hispanic";
+			else if (raceinput == 4)
+				key = "Asian; Non-Hispanic";
+			else if (raceinput == 5)
+				key = "Native Hawaiian/Other Pacific Islander; Non-Hispanic";
+			else if (raceinput == 6)
+				key = "White; Non-Hispanic";
+			else if (raceinput == 7)
+				key = "Multiple/Other; Non-Hispanic";
+			
+			for (int i = 0;i < caseListmapRace[key].size();i++) {
+				if (caseListmapRace[key].at(i)->hospitalization == "Yes")
+					hosp++;
+				if (caseListmapRace[key].at(i)->death == "Yes")
+					deaths++;
+			}
+			cout << "Number of fatalities in your race: " << deaths << endl;
+			cout << "Number of Hospitalizations in your race: " << hosp << endl;
+			
+			/*case 4:
+				break;
 			case 5:
 				break;
 			case 6:
