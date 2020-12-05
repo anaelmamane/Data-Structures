@@ -243,12 +243,13 @@ int main() {
 	//main menu
 	//bool that runs the while loop
 	bool loop = true;
-	//vector that holds the cases that match the date. Had to declare here for some reason???
-	vector<Case*> matchDate;
-	//int for deaths and hospitalizations
-	int deaths = 0, hosp = 0;
 
 	while (loop) {
+		//vector that holds the cases that match the date. Had to declare here for some reason???
+		vector<Case*> matchDate;
+		//int for deaths and hospitalizations
+		int deaths = 0, hosp = 0;
+
 		cout << "Main Menu" << endl;
 		//input 2 might not be used as some inputs only require one input
 		short input1, input2;
@@ -256,15 +257,10 @@ int main() {
 		//Menu option
 		int option;
 
-		//1. month and date
+		//menu opptions
 		cout << "1. Month and Day" << endl;
 		cout << "2. Age" << endl;
 		cout << "3. Race" << endl;
-
-
-		//2, 3, 4, 5, etc
-
-		//ending the loop & program
 		cout << "9. Quit" << endl;
 
 		//receiving the input
@@ -301,54 +297,50 @@ int main() {
 			cout << "Number of Deaths on this Date: " << deaths << endl;
 			cout << "Number of Hospitalizations on this Date: " << hosp << endl;
 
-			//ready for next loop
-			deaths = 0;
-			hosp = 0;
+			break;
+		case 2:
+			cout << "Input your age" << endl;
+			cin >> ageinput;
+			if (ageinput <= 9)
+				key = "0 - 9 Years";
+			else if (ageinput <= 19)
+				key = "10 - 19 Years";
+			else if (ageinput <= 29)
+				key = "20 - 29 Years";
+			else if (ageinput <= 39)
+				key = "30 - 39 Years";
+			else if (ageinput <= 49)
+				key = "40 - 49 Years";
+			else if (ageinput <= 59)
+				key = "50 - 59 Years";
+			else if (ageinput <= 69)
+				key = "60 - 69 Years";
+			else if (ageinput <= 79)
+				key = "70 - 79 Years";
+			else if (ageinput >= 80)
+				key = "80+ Years";
+
+
+			for (int i = 0;i < caseListmap[key].size();i++) {
+				if (caseListmap[key].at(i)->hospitalization == "Yes")
+					hosp++;
+				if (caseListmap[key].at(i)->death == "Yes")
+					deaths++;
+			}
+			cout << "Number of fatalities in your age range: " << deaths << endl;
+			cout << "Number of Hospitalizations in your age range: " << hosp << endl;
 
 			break;
-			case 2:
-				cout << "Input your age" << endl;
-				cin >> ageinput;
-				if (ageinput <= 9)
-					key = "0 - 9 Years";
-				else if (ageinput <= 19)
-					key = "10 - 19 Years";
-				else if (ageinput <= 29)
-					key = "20 - 29 Years";
-				else if (ageinput <= 39)
-					key = "30 - 39 Years";
-				else if (ageinput <= 49)
-					key = "40 - 49 Years";
-				else if (ageinput <= 59)
-					key = "50 - 59 Years";
-				else if (ageinput <= 69)
-					key = "60 - 69 Years";
-				else if (ageinput <= 79)
-					key = "70 - 79 Years";
-				else if (ageinput>=80)
-					key = "80+ Years";
-
-
-				for (int i = 0;i < caseListmap[key].size();i++) {
-					if (caseListmap[key].at(i)->hospitalization == "Yes")
-						hosp++;
-					if (caseListmap[key].at(i)->death == "Yes")
-						deaths++;
-				}
-				cout << "Number of fatalities in your age range: " << deaths << endl;
-				cout << "Number of Hospitalizations in your age range: " << hosp << endl;
-
-					break;
-			case 3:
-				cout << "Input your Race:" << endl;
-				cout << "1. Hispanic/Latino"<< endl;
-				cout << "2. Black, Non-Hispanic" << endl;
-				cout << "3. American Indian/Alaska Native, Non-Hispanic" << endl;
-				cout << "4. Asian, Non-Hispanic" << endl;
-				cout << "5. Native Hawaiian/ Other Pacific Islander, Non-Hispanic" << endl;
-				cout << "6. White, Non- Hispanic" << endl;
-				cout << "7. Multiple/Other" << endl;
-				cin >> raceinput;
+		case 3:
+			cout << "Input your Race: " << endl;
+			cout << "1. Hispanic/Latino" << endl;
+			cout << "2. Black, Non-Hispanic" << endl;
+			cout << "3. American Indian/Alaska Native, Non-Hispanic" << endl;
+			cout << "4. Asian, Non-Hispanic" << endl;
+			cout << "5. Native Hawaiian/ Other Pacific Islander, Non-Hispanic" << endl;
+			cout << "6. White, Non-Hispanic" << endl;
+			cout << "7. Multiple/Other" << endl;
+			cin >> raceinput;
 
 			/*case 4:
 				break;
