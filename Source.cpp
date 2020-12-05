@@ -271,7 +271,7 @@ int main() {
 		string key;
 		//make a switch statement that checks option
 		switch (option) {
-		case 1:
+		case 1: //Search by date
 			cout << "Insert a Month then a Date" << endl;
 			cout << "Month: ";
 			cin >> input1;
@@ -298,7 +298,7 @@ int main() {
 			cout << "Number of Hospitalizations on this Date: " << hosp << endl;
 
 			break;
-		case 2:
+		case 2: //Search by age
 			cout << "Input your age" << endl;
 			cin >> ageinput;
 			if (ageinput <= 9)
@@ -321,7 +321,7 @@ int main() {
 				key = "80+ Years";
 
 
-			for (int i = 0;i < caseListmap[key].size();i++) {
+			for (int i = 0; i < caseListmap[key].size(); i++) {
 				if (caseListmap[key].at(i)->hospitalization == "Yes")
 					hosp++;
 				if (caseListmap[key].at(i)->death == "Yes")
@@ -331,7 +331,7 @@ int main() {
 			cout << "Number of Hospitalizations in your age range: " << hosp << endl;
 
 			break;
-		case 3:
+		case 3: //Search race
 			cout << "Input your Race: " << endl;
 			cout << "1. Hispanic/Latino" << endl;
 			cout << "2. Black, Non-Hispanic" << endl;
@@ -341,9 +341,11 @@ int main() {
 			cout << "6. White, Non-Hispanic" << endl;
 			cout << "7. Multiple/Other" << endl;
 			cin >> raceinput;
+			break;
 
-			/*case 4:
-				break;
+		case 4: //Race,Age
+			break;
+			/*
 			case 5:
 				break;
 			case 6:
