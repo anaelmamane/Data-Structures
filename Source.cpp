@@ -190,12 +190,10 @@ vector<Case*> AVL_Tree::Search(int month, int date, Node* root) {
 int main() {
 	AVL_Tree* test_tree = new AVL_Tree;
 
-	//Map that holds cases bases on age
-	unordered_map<string, vector<Case*>> caseAgeList;
-	//Map that holds cases bases on race
-	unordered_map<string, vector<Case*>> caseRaceList;
-	//Map that holds cases bases on age for case 4
-	unordered_map<string, vector<Case*>> temporaryAgeMap;
+	//Map that holds cases
+	unordered_map<string, vector<Case*>> caseListmap;
+	unordered_map<string, vector<Case*>> caseListmapRace;
+	unordered_map<string, vector<Case*>> caseListmapSex;
 	//Temporary Case object
 	//creates an ifstream object
 	ifstream file;
@@ -236,9 +234,11 @@ int main() {
 
 			//Places data into a map
 			//map sorted by age
-			caseAgeList[newCase->age].push_back(newCase);
+			caseListmap[newCase->age].push_back(newCase);
 			//map that sorted by race
-			caseRaceList[newCase->race].push_back(newCase);
+			caseListmapRace[newCase->race].push_back(newCase);
+			//map sorted by sex
+			caseListmapSex[newCase->sex].push_back(newCase);
 			//tree sorted by date
 			test_tree->root = test_tree->insert_AVL(test_tree->root, newNode, newCase);
 		}
@@ -257,7 +257,7 @@ int main() {
 		//vector that holds the cases that match the date. Had to declare here for some reason???
 		vector<Case*> matchDate;
 		//int for deaths and hospitalizations
-		short deaths = 0, hosp = 0;
+		int deaths = 0, hosp = 0;
 
 		cout << "Main Menu" << endl;
 		//input 2 might not be used as some inputs only require one input
@@ -279,9 +279,8 @@ int main() {
 
 		int ageinput;
 		int raceinput;
+		int sexinput;
 		string key;
-		string key1;
-		string key2;
 		//make a switch statement that checks option
 		switch (option) {
 		case 1:
@@ -312,7 +311,7 @@ int main() {
 
 			break;
 		case 2:
-			cout << "Input your age" << endl;
+			cout << "Input your Age: " << endl;
 			cin >> ageinput;
 			if (ageinput <= 9)
 				key = "0 - 9 Years";
@@ -334,16 +333,16 @@ int main() {
 				key = "80+ Years";
 
 
-			for (int i = 0; i < caseAgeList[key].size(); i++) {
-				if (caseAgeList[key].at(i)->hospitalization == "Yes")
+			for (int i = 0; i < caseListmap[key].size(); i++) {
+				if (caseListmap[key].at(i)->hospitalization == "Yes")
 					hosp++;
-				if (caseAgeList[key].at(i)->death == "Yes")
+				if (caseListmap[key].at(i)->death == "Yes")
 					deaths++;
 			}
 			cout << "Number of fatalities in your age range: " << deaths << endl;
-			cout << "Percentage of deaths among chosen age range: " << ((float)deaths / caseAgeList[key].size()) * 10.0 << fixed << setprecision(3) << " %\n";
+			cout << "Percentage of deaths among chosen age range: " << ((float)deaths / caseListmap[key].size()) * 10.0 << fixed << setprecision(3) << " %\n";
 			cout << "Number of Hospitalizations in your age range: " << hosp << endl;
-			cout << "Percentage of hospitalizations among chosen age range: " << ((float)hosp / caseAgeList[key].size()) * 10.0 << fixed << setprecision(3) << " %\n";
+			cout << "Percentage of hospitalizations among chosen age range: " << ((float)hosp / caseListmap[key].size()) * 10.0 << fixed << setprecision(3) << " %\n";
 
 			break;
 		case 3:
@@ -373,93 +372,47 @@ int main() {
 			else if (raceinput == 7)
 				key = "Multiple/Other; Non-Hispanic";
 
-			for (int i = 0; i < caseRaceList[key].size(); i++) {
-				if (caseRaceList[key].at(i)->hospitalization == "Yes")
+			for (int i = 0; i < caseListmapRace[key].size(); i++) {
+				if (caseListmapRace[key].at(i)->hospitalization == "Yes")
 					hosp++;
-				if (caseRaceList[key].at(i)->death == "Yes")
+				if (caseListmapRace[key].at(i)->death == "Yes")
 					deaths++;
 			}
 			cout << "Number of fatalities in your race: " << deaths << endl;
 			cout << "Percentage of deaths among chosen race: " <<
-				((float)deaths / caseRaceList[key].size()) * 10.0 << fixed << setprecision(3) << " %\n";
+				((float)deaths / caseListmapRace[key].size()) * 10.0 << fixed << setprecision(3) << " %\n";
 			cout << "Number of Hospitalizations in your race: " << hosp << endl;
 			cout << "Percentage of hospitalizations among chosen race: " <<
-				((float)hosp / caseRaceList[key].size()) * 10.0 << fixed << setprecision(3) << " %\n";
+				((float)hosp / caseListmapRace[key].size()) * 10.0 << fixed << setprecision(3) << " %\n";
 			break;
-			case 4:
-				
 
+		case 4:
+			cout << "Input your Sex: " << endl;
+			cout << "1. Male" << endl;
+			cout << "2. Female" << endl;
+			cin >> sexinput;
 
+			if (sexinput == 1)
+				key = "Male";
+			else if (sexinput == 2)
+				key = "Female";
+
+			for (int i = 0; i < caseListmapSex[key].size(); i++) {
+				if (caseListmapSex[key].at(i)->hospitalization == "Yes")
+					hosp++;
+				if (caseListmapSex[key].at(i)->death == "Yes")
+					deaths++;
+			}
+			cout << "Number of fatalities in your sex: " << deaths << endl;
+			cout << "Percentage of deaths among chosen sex: " <<
+				((float)deaths / caseListmapSex[key].size()) * 10.0 << fixed << setprecision(3) << " %\n";
+			cout << "Number of Hospitalizations in your race: " << hosp << endl;
+			cout << "Percentage of hospitalizations among chosen race: " <<
+				((float)hosp / caseListmapSex[key].size()) * 10.0 << fixed << setprecision(3) << " %\n";
+
+			break;
+			/*case 5:
 				break;
-			case 5:
-				cout << "Input your Race: " << endl;
-				cout << "1. Hispanic/Latino" << endl;
-				cout << "2. Black; Non-Hispanic" << endl;
-				cout << "3. American Indian/Alaska Native; Non-Hispanic" << endl;
-				cout << "4. Asian; Non-Hispanic" << endl;
-				cout << "5. Native Hawaiian/Other Pacific Islander; Non-Hispanic" << endl;
-				cout << "6. White; Non-Hispanic" << endl;
-				cout << "7. Multiple/Other" << endl;
-				cin >> raceinput;
-
-				//assign a key for the race map
-				if (raceinput == 1)
-					key1 = "Hispanic/Latino";
-				else if (raceinput == 2)
-					key1 = "Black; Non-Hispanic";
-				else if (raceinput == 3)
-					key1 = "American Indian/Alaska Native; Non-Hispanic";
-				else if (raceinput == 4)
-					key1 = "Asian; Non-Hispanic";
-				else if (raceinput == 5)
-					key1 = "Native Hawaiian/Other Pacific Islander; Non-Hispanic";
-				else if (raceinput == 6)
-					key1 = "White; Non-Hispanic";
-				else if (raceinput == 7)
-					key1 = "Multiple/Other; Non-Hispanic";
-
-				cout << "Input your age" << endl;
-				cin >> ageinput;
-				if (ageinput <= 9)
-					key2 = "0 - 9 Years";
-				else if (ageinput <= 19)
-					key2 = "10 - 19 Years";
-				else if (ageinput <= 29)
-					key2 = "20 - 29 Years";
-				else if (ageinput <= 39)
-					key2 = "30 - 39 Years";
-				else if (ageinput <= 49)
-					key2 = "40 - 49 Years";
-				else if (ageinput <= 59)
-					key2 = "50 - 59 Years";
-				else if (ageinput <= 69)
-					key2 = "60 - 69 Years";
-				else if (ageinput <= 79)
-					key2 = "70 - 79 Years";
-				else if (ageinput >= 80)
-					key2 = "80+ Years";
-
-
-				//Adds all cases with age
-				for (int i = 0; i < caseRaceList[key1].size(); i++) {
-					temporaryAgeMap[caseRaceList[key1].at(i)->age].push_back(caseRaceList[key1].at(i));
-				}
-
-				for (int i = 0; i < temporaryAgeMap[key2].size(); i++) {
-					if (temporaryAgeMap[key2].at(i)->hospitalization == "Yes")
-						hosp++;
-					if (temporaryAgeMap[key2].at(i)->death == "Yes")
-						deaths++;
-				}
-
-				cout << "Number of fatalities in your race: " << deaths << endl;
-				cout << "Percentage of deaths among chosen race: " <<
-					((float)deaths / temporaryAgeMap[key2].size()) * 10.0 << fixed << setprecision(3) << " %\n";
-				cout << "Number of Hospitalizations in your race: " << hosp << endl;
-				cout << "Percentage of hospitalizations among chosen race: " <<
-					((float)hosp / temporaryAgeMap[key2].size()) * 10.0 << fixed << setprecision(3) << " %\n";
-				break;
-				/*
 			case 6:
 				break;
 			case 7:
