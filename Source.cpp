@@ -249,6 +249,8 @@ int main() {
 
 	while (loop) {
 		cout << "============================== Welcome to COVID WATCH ==============================\n";
+		cout << "====================================================================================\n";
+		cout << "====================================================================================\n";
 		//vector that holds the cases that match the date. Had to declare here for some reason???
 		vector<Case*> matchDate;
 		//int for deaths and hospitalizations
@@ -265,6 +267,8 @@ int main() {
 		cout << "1. Month and Day" << endl;
 		cout << "2. Age" << endl;
 		cout << "3. Race" << endl;
+		cout << "4. Sex" << endl;
+		cout << "5. Race, Age, Sex" << endl;
 		cout << "9. Quit" << endl;
 
 		//receiving the input
