@@ -331,7 +331,9 @@ int main() {
 					deaths++;
 			}
 			cout << "Number of fatalities in your age range: " << deaths << endl;
+			cout << "Percentage: " << ((float)deaths / caseListmap[key].size())*10.0 << fixed << setprecision(3) << " %\n";
 			cout << "Number of Hospitalizations in your age range: " << hosp << endl;
+			cout << "Percentage: " << ((float)hosp / caseListmap[key].size())*10.0 << fixed << setprecision(3) << " %\n";
 
 			break;
 		case 3:
