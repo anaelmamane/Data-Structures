@@ -310,7 +310,7 @@ int main() {
 		short ageinput;
 		short raceinput;
 		short sexinput;
-		
+
 		//Temporary boolean key
 		bool keyB;
 
@@ -323,7 +323,7 @@ int main() {
 		string key3;
 		//make a switch statement that checks option
 		switch (option) {
-		case 1: 
+		case 1:
 			cout << "Insert a Month then a Date" << endl;
 			cout << "Month: ";
 			cin >> input1;
@@ -346,17 +346,22 @@ int main() {
 				if (matchDate[i]->hospitalization == 'Y')
 					hosp++;
 			}
-			
-			//Prints data
-			cout << "Number of Hospitalizations on this Date: " << hosp << endl;
-			cout << "Percentage of hospitalizations among chosen age range: "
-				<< ((float)hosp / matchDate.size()) * 10.0 << fixed << setprecision(3) << " %\n";
-			cout << "Number of ICU cases on this Date: " << icuNum << endl;
-			cout << "Percentage of ICU cases among chosen age range: "
-				<< ((float)icuNum / matchDate.size()) * 10.0 << fixed << setprecision(3) << " %\n";
-			cout << "Number of Deaths on this Date: " << deaths << endl;
-			cout << "Percentage of deaths among chosen age range: "
-				<< ((float)deaths / matchDate.size()) * 10.0 << fixed << setprecision(3) << " %\n";
+			//bad input check
+			if (input1 > 12 || input1 < 1 || input2 < 1 || input2 > 31) {
+				cout << "Invalid Date!" << endl;
+			}
+			else {
+				//Prints data
+				cout << "Number of Hospitalizations on this Date: " << hosp << endl;
+				cout << "Percentage of hospitalizations among chosen age range: "
+					<< ((float)hosp / matchDate.size()) * 10.0 << fixed << setprecision(3) << " %\n";
+				cout << "Number of ICU cases on this Date: " << icuNum << endl;
+				cout << "Percentage of ICU cases among chosen age range: "
+					<< ((float)icuNum / matchDate.size()) * 10.0 << fixed << setprecision(3) << " %\n";
+				cout << "Number of Deaths on this Date: " << deaths << endl;
+				cout << "Percentage of deaths among chosen age range: "
+					<< ((float)deaths / matchDate.size()) * 10.0 << fixed << setprecision(3) << " %\n";
+			}
 			break;
 		case 2:
 			//Asks user for their age
@@ -383,7 +388,7 @@ int main() {
 
 			//Counts the total hospitalization, ICU cases and deaths within specied range
 			for (unsigned int i = 0; i < caseAgeList[keyC].size(); i++) {
-				
+
 				if (caseAgeList[keyC].at(i)->hospitalization == 'Y')
 					hosp++;
 				if (caseAgeList[keyC].at(i)->icu == 'Y')
@@ -400,9 +405,9 @@ int main() {
 			cout << "Percentage of ICU cases among chosen age range: "
 				<< ((float)icuNum / caseAgeList[keyC].size()) * 10.0 << fixed << setprecision(3) << " %\n";
 			cout << "Number of fatalities in your age range: " << deaths << endl;
-			cout << "Percentage of deaths among chosen age range: " 
+			cout << "Percentage of deaths among chosen age range: "
 				<< ((float)deaths / caseAgeList[keyC].size()) * 10.0 << fixed << setprecision(3) << " %\n";
-			
+
 
 			break;
 		case 3:
@@ -432,6 +437,10 @@ int main() {
 				key = "White; Non-Hispanic";
 			else if (raceinput == 7)
 				key = "Multiple/Other; Non-Hispanic";
+			else {
+				cout << "Invalid Selection!" << endl;
+				break;
+			}
 
 			//Counts the total hospitalization, ICU cases and deaths within specied range
 			for (unsigned int i = 0; i < caseRaceList[key].size(); i++) {
@@ -453,10 +462,10 @@ int main() {
 			cout << "Number of fatalities in your race: " << deaths << endl;
 			cout << "Percentage of deaths among chosen race: " <<
 				((float)deaths / caseRaceList[key].size()) * 10.0 << fixed << setprecision(3) << " %\n";
-			
+
 			break;
 		case 4:
-			//Asks user for age
+			//Asks user for sex
 			cout << "Input your Sex: " << endl;
 			cout << "1. Male" << endl;
 			cout << "2. Female" << endl;
@@ -465,6 +474,10 @@ int main() {
 				keyB = 1;
 			else if (sexinput == 2)
 				keyB = 0;
+			else {
+				cout << "Invalid Selection!" << endl;
+				break;
+			}
 
 			//Counts the total hospitalization, ICU cases and deaths within specied range
 			for (unsigned int i = 0; i < caseListmapSex[keyB].size(); i++) {
@@ -475,7 +488,7 @@ int main() {
 				if (caseListmapSex[keyB].at(i)->death == 'Y')
 					deaths++;
 			}
-			
+
 			//Prints data
 			cout << "Number of Hospitalizations in your race: " << hosp << endl;
 			cout << "Percentage of hospitalizations among chosen race: " <<
@@ -514,6 +527,10 @@ int main() {
 				key1 = "White; Non-Hispanic";
 			else if (raceinput == 7)
 				key1 = "Multiple/Other; Non-Hispanic";
+			else {
+				cout << "Invalid Selection!" << endl;
+				break;
+			}
 
 			//Asks user age
 			cout << "Input your age" << endl;
@@ -551,6 +568,10 @@ int main() {
 				keyB = 1;
 			else if (sexinput == 2)
 				keyB = 0;
+			else {
+				cout << "Invalid Selection!" << endl;
+				break;
+			}
 
 			//Adds all cases bases on sex
 			for (unsigned int i = 0; i < temporaryAgeMap[keyC].size(); i++) {
