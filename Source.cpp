@@ -8,6 +8,9 @@
 #include <unordered_map>
 #include <cstdint>
 #include <vector>
+#include <ctime>  
+#include <chrono>
+
 
 using namespace std;
 
@@ -198,6 +201,8 @@ int main() {
 	unordered_map<char, vector<Case*>> temporaryAgeMap;
 	//Map that holds cases bases on age for case 4
 	unordered_map<bool, vector<Case*>> temporarySexMap;
+	map<pair<int, int>, vector<Case*>> mapcompare;
+
 
 	//creates an ifstream object
 	ifstream file;
@@ -214,6 +219,8 @@ int main() {
 
 		//Loads data from file into map using commma as delimeter
 		while (getline(file, temp, ',')) {
+			pair<int, int> pairforkey;
+
 			//Creates a node for the tree using the Node object
 			Node* newNode = new Node;
 			//Create a new Case object for a case
@@ -225,7 +232,7 @@ int main() {
 
 			//Grabs day and saves it as a 8 bit unsigned int
 			newNode->day = (short)stoi(temp.substr(temp.find('/') + 1, temp.size() - 7));
-
+			pairforkey = make_pair(newNode->month, newNode->day);
 			//Laboratory status, not needed
 			getline(file, temp, ',');
 
@@ -265,6 +272,8 @@ int main() {
 			//Places data into a map
 			//map sorted by age
 			caseAgeList[newCase->age].push_back(newCase);
+			//map for comparison
+			mapcompare[pairforkey].push_back(newCase);
 			//map thats sorted by race
 			caseRaceList[newCase->race].push_back(newCase);
 			//map sorted by sex
@@ -322,6 +331,9 @@ int main() {
 		string key1;
 		string key2;
 		string key3;
+		//start time:has to be initialized outside of switch, will re-declare it in case 6
+		auto start = std::chrono::system_clock::now();
+
 		//make a switch statement that checks option
 		switch (option) {
 		case 1:
@@ -601,20 +613,97 @@ int main() {
 				((float)deaths / temporarySexMap[keyB].size()) * 10.0 << fixed << setprecision(3) << " %\n";
 			break;
 		case 6:
+			cout << "Insert a Month then a Date" << endl;
+			cout << "Month: ";
+			cin >> input1;
+			cout << "Date: ";
+			cin >> input2;
+			start = chrono::system_clock::now();
+
+
+			cout << input1 << " " << input2 << endl;
+
+			//vector of nodes that matches the searched for date
+			matchDate = test_tree->Search(input1, input2, test_tree->root);
+			//cout << "vector return size: " << matchDate.size();
+
+
+			//Counts the total hospitalization, ICU cases and deaths within specied range
+			for (unsigned int i = 0; i < matchDate.size(); i++) {
+				if (matchDate[i]->death == 'Y')
+					deaths++;
+				if (matchDate[i]->icu == 'Y')
+					icuNum++;
+				if (matchDate[i]->hospitalization == 'Y')
+					hosp++;
+			}
+			//bad input check
+			if (input1 > 12 || input1 < 1 || input2 < 1 || input2 > 31) {
+				cout << "Invalid Date!" << endl;
+			}
+			else {
+				auto end = chrono::system_clock::now();
+				chrono::duration<double> elapsed_seconds = end - start;
+				time_t end_time = chrono::system_clock::to_time_t(end);
+
+				//Prints data
+				cout << "Using an AVL:";
+				cout << "Number of Hospitalizations on this Date: " << hosp << endl;
+				cout << "Percentage of hospitalizations among chosen age range: "
+					<< ((float)hosp / matchDate.size()) * 10.0 << fixed << setprecision(3) << " %\n";
+				cout << "Number of ICU cases on this Date: " << icuNum << endl;
+				cout << "Percentage of ICU cases among chosen age range: "
+					<< ((float)icuNum / matchDate.size()) * 10.0 << fixed << setprecision(3) << " %\n";
+				cout << "Number of Deaths on this Date: " << deaths << endl;
+				cout << "Percentage of deaths among chosen age range: "
+					<< ((float)deaths / matchDate.size()) * 10.0 << fixed << setprecision(3) << " %\n";
+				std::cout << "elapsed time for AVL: " << elapsed_seconds.count() << "s\n";
+				hosp = 0;
+				icuNum = 0;
+				deaths = 0;
+			}
+				start= chrono::system_clock::now();
+				pair <int, int> mapkey;
+				mapkey= make_pair(input1, input2);
+				for (int i = 0; i < mapcompare[mapkey].size();i++) {
+					if (mapcompare[mapkey].at(i)->hospitalization == 'Y')
+						hosp++;
+					if (mapcompare[mapkey].at(i)->death == 'Y')
+						deaths++;
+					if (mapcompare[mapkey].at(i)->icu == 'Y')
+						icuNum++;
+				
+			}
+				auto end = chrono::system_clock::now();
+				chrono::duration<double> elapsed_seconds = end - start;
+				time_t end_time = chrono::system_clock::to_time_t(end);
+				cout << "Using a Hashmap:";
+				cout << "Number of Hospitalizations on this Date: " << hosp << endl;
+				cout << "Percentage of hospitalizations among chosen age range: "
+					<< ((float)hosp / matchDate.size()) * 10.0 << fixed << setprecision(3) << " %\n";
+				cout << "Number of ICU cases on this Date: " << icuNum << endl;
+				cout << "Percentage of ICU cases among chosen age range: "
+					<< ((float)icuNum / matchDate.size()) * 10.0 << fixed << setprecision(3) << " %\n";
+				cout << "Number of Deaths on this Date: " << deaths << endl;
+				cout << "Percentage of deaths among chosen age range: "
+					<< ((float)deaths / matchDate.size()) * 10.0 << fixed << setprecision(3) << " %\n";
+				std::cout << "elapsed time for Hashmap: " << elapsed_seconds.count() << "s\n";
 			break;
+
 		case 7:
 			loop = false;
 			break;
-		default:
+			//default:
 			cout << "Invalid Selection!" << endl;
 			break;
 
-		cout << endl;
-		cout << endl;
-		cout << endl;
-		cout << endl;
-		cout << endl;
-		cout << endl;
+			cout << endl;
+			cout << endl;
+			cout << endl;
+			cout << endl;
+			cout << endl;
+			cout << endl;
+		}
 	}
 	return 0;
 }
