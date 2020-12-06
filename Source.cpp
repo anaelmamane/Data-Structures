@@ -302,7 +302,8 @@ int main() {
 		cout << "3. Race" << endl;
 		cout << "4. Sex" << endl;
 		cout << "5. Race, Age, Sex" << endl;
-		cout << "9. Quit" << endl;
+		cout << "6. Comparison" << endl;
+		cout << "7. Quit" << endl;
 
 		//receiving the input
 		cin >> option;
@@ -599,10 +600,15 @@ int main() {
 			cout << "Percentage of deaths among chosen race: " <<
 				((float)deaths / temporarySexMap[keyB].size()) * 10.0 << fixed << setprecision(3) << " %\n";
 			break;
-		case 9:
+		case 6:
+			break;
+		case 7:
 			loop = false;
 			break;
-		}
+		default:
+			cout << "Invalid Selection!" << endl;
+			break;
+
 		cout << endl;
 		cout << endl;
 		cout << endl;
