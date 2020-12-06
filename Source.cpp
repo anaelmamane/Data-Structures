@@ -333,6 +333,11 @@ int main() {
 		string key3;
 		//start time:has to be initialized outside of switch, will re-declare it in case 6
 		auto start = std::chrono::system_clock::now();
+		pair <int, int> mapkey;
+		auto end = std::chrono::system_clock::now();
+
+		time_t end_time = chrono::system_clock::to_time_t(end);
+
 
 		//make a switch statement that checks option
 		switch (option) {
@@ -642,52 +647,39 @@ int main() {
 				cout << "Invalid Date!" << endl;
 			}
 			else {
-				auto end = chrono::system_clock::now();
+			    end = chrono::system_clock::now();
 				chrono::duration<double> elapsed_seconds = end - start;
-				time_t end_time = chrono::system_clock::to_time_t(end);
+			    end_time = chrono::system_clock::to_time_t(end);
 
 				//Prints data
 				cout << "Using an AVL:";
 				cout << "Number of Hospitalizations on this Date: " << hosp << endl;
-				cout << "Percentage of hospitalizations among chosen age range: "
-					<< ((float)hosp / matchDate.size()) * 10.0 << fixed << setprecision(3) << " %\n";
 				cout << "Number of ICU cases on this Date: " << icuNum << endl;
-				cout << "Percentage of ICU cases among chosen age range: "
-					<< ((float)icuNum / matchDate.size()) * 10.0 << fixed << setprecision(3) << " %\n";
 				cout << "Number of Deaths on this Date: " << deaths << endl;
-				cout << "Percentage of deaths among chosen age range: "
-					<< ((float)deaths / matchDate.size()) * 10.0 << fixed << setprecision(3) << " %\n";
 				std::cout << "elapsed time for AVL: " << elapsed_seconds.count() << "s\n";
 				hosp = 0;
 				icuNum = 0;
 				deaths = 0;
 			}
-				start= chrono::system_clock::now();
-				pair <int, int> mapkey;
-				mapkey= make_pair(input1, input2);
-				for (int i = 0; i < mapcompare[mapkey].size();i++) {
-					if (mapcompare[mapkey].at(i)->hospitalization == 'Y')
-						hosp++;
-					if (mapcompare[mapkey].at(i)->death == 'Y')
-						deaths++;
-					if (mapcompare[mapkey].at(i)->icu == 'Y')
-						icuNum++;
-				
+			start = chrono::system_clock::now();
+			mapkey = make_pair(input1, input2);
+			for (int i = 0; i < mapcompare[mapkey].size(); i++) {
+				if (mapcompare[mapkey].at(i)->hospitalization == 'Y')
+					hosp++;
+				if (mapcompare[mapkey].at(i)->death == 'Y')
+					deaths++;
+				if (mapcompare[mapkey].at(i)->icu == 'Y')
+					icuNum++;
+
 			}
-				auto end = chrono::system_clock::now();
-				chrono::duration<double> elapsed_seconds = end - start;
-				time_t end_time = chrono::system_clock::to_time_t(end);
-				cout << "Using a Hashmap:";
-				cout << "Number of Hospitalizations on this Date: " << hosp << endl;
-				cout << "Percentage of hospitalizations among chosen age range: "
-					<< ((float)hosp / matchDate.size()) * 10.0 << fixed << setprecision(3) << " %\n";
-				cout << "Number of ICU cases on this Date: " << icuNum << endl;
-				cout << "Percentage of ICU cases among chosen age range: "
-					<< ((float)icuNum / matchDate.size()) * 10.0 << fixed << setprecision(3) << " %\n";
-				cout << "Number of Deaths on this Date: " << deaths << endl;
-				cout << "Percentage of deaths among chosen age range: "
-					<< ((float)deaths / matchDate.size()) * 10.0 << fixed << setprecision(3) << " %\n";
-				std::cout << "elapsed time for Hashmap: " << elapsed_seconds.count() << "s\n";
+		    end = chrono::system_clock::now();
+			chrono::duration<double> elapsed_seconds = end - start;
+	        end_time = chrono::system_clock::to_time_t(end);
+			cout << "Using a Hashmap:";
+			cout << "Number of Hospitalizations on this Date: " << hosp << endl;
+			cout << "Number of ICU cases on this Date: " << icuNum << endl;
+			cout << "Number of Deaths on this Date: " << deaths << endl;
+			std::cout << "elapsed time for Hashmap: " << elapsed_seconds.count() << "s\n";
 			break;
 
 		case 7:
