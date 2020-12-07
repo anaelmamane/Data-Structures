@@ -239,10 +239,11 @@ int main() {
 
 			//   Date format   ##/##/#### saved in datecdc
 			//Grabs month and saves it as a 8 bit unsigned int
-			newNode->month = (short)stoi(temp.substr(0, temp.find('/')));
+			auto ind = temp.find('/');
+			newNode->month = (short)stoi(temp.substr(0, ind));
 
 			//Grabs day and saves it as a 8 bit unsigned int
-			newNode->day = (short)stoi(temp.substr(temp.find('/') + 1, temp.size() - 7));
+			newNode->day = (short)stoi(temp.substr(ind + 1, temp.size() - 7));
 
 			//Laboratory status, not needed
 			getline(file, temp, ',');
@@ -301,9 +302,9 @@ int main() {
 	bool loop = true;
 
 	while (loop) {
-		cout << "============================== Welcome to COVID WATCH ==============================\n";
-		cout << "====================================================================================\n";
-		cout << "====================================================================================\n";
+		cout << "==================================== Welcome to COVID WATCH ====================================\n";
+		cout << "================================================================================================\n";
+		cout << "================================================================================================\n";
 		//vector that holds the cases that match the date. Had to declare here for some reason???
 		vector<Case*> matchDate;
 
