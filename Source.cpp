@@ -197,17 +197,19 @@ void findData(unsigned short &deaths, unsigned short &icuNum, unsigned short &ho
 	}
 }
 
-void printData(unsigned short& deaths, unsigned short& icuNum, unsigned short& hosp, unsigned short size) {
-	cout << "Number of Hospitalizations on this Date: " << hosp << endl;
-	cout << "Percentage of hospitalizations among chosen date: "
-		<< FIXED_FLOAT4(((float)hosp / size) * 10.0) << " %\n";
-	cout << "Number of ICU cases on this Date: " << icuNum << endl;
-	cout << "Percentage of ICU cases among chosen date: "
-		<< FIXED_FLOAT4(((float)icuNum / size) * 10.0) << " %\n";
-	cout << "Number of Deaths on this Date: " << deaths << endl;
-	cout << "Percentage of deaths among chosen date: "
-		<< FIXED_FLOAT4(((float)deaths / size) * 10.0) << " %\n";
-	cout << "Total Cases: " << size << endl;
+void printData(unsigned short& deaths, unsigned short& icuNum, unsigned short& hosp, 
+	unsigned short size) {
+	if (size == 0)
+		cout << "\nThere were no cases based on this criteria." << endl;
+	else {
+		cout << "\nNumber of Hospitalizations: " << hosp << endl;
+		cout << "Percentage of hospitalizations: " << FIXED_FLOAT4(((float)hosp / size) * 10.0) << " %\n\n";
+		cout << "Number of ICU cases: " << icuNum << endl;
+		cout << "Percentage of ICU cases: " << FIXED_FLOAT4(((float)icuNum / size) * 10.0) << " %\n\n";
+		cout << "Number of Deaths: " << deaths << endl;
+		cout << "Percentage of deaths: " << FIXED_FLOAT4(((float)deaths / size) * 10.0) << " %\n\n";
+		cout << "Total Cases: " << size << endl;
+	}
 }
 
 //Hash funtion that recieves month and day and returns unique key
