@@ -153,6 +153,7 @@ Node* AVL_Tree::insert_AVL(Node* root, Node* newNode, Case* newCase) {
 	return root;
 }
 
+//Funtion that returns a Vector of cases, based on an input date
 vector<Case*> AVL_Tree::Search(short month, short date, Node* root) {
 	vector<Case*> found;
 	//if not found
@@ -187,23 +188,35 @@ vector<Case*> AVL_Tree::Search(short month, short date, Node* root) {
 	return found;
 }
 
+//Hash funtion that recieves month and day and returns unique key
+short hashf(short month, short day) {
+	return 100 * month + day;
+}
+
 //CDC_Report  N/A   Sex    Age     Race     Hosp     ICU    Death    MedCond
 int main() {
-	AVL_Tree* test_tree = new AVL_Tree;
+	//AVL Tree that holds nodes based on dates
+	AVL_Tree* datesTree = new AVL_Tree;
 
-	//Map that holds cases bases on age
+	//Map that holds cases based on age
 	unordered_map<char, vector<Case*>> caseAgeList;
-	//Map that holds cases bases on race
+	//Map that holds cases based on race
 	unordered_map<string, vector<Case*>> caseRaceList;
-	//Map that holds cases bases on sex
+	//Map that holds cases based on sex
 	unordered_map<bool, vector<Case*>> caseListmapSex;
-	//Map that holds cases bases on age for case 4
+	//Map that holds cases based on medical condition
+	unordered_map<bool, vector<Case*>> caseListmapMedCond;
+	//Map that holds cases based on age for case 6
 	unordered_map<char, vector<Case*>> temporaryAgeMap;
-	//Map that holds cases bases on age for case 4
+	//Map that holds cases based on sex for case 6
 	unordered_map<bool, vector<Case*>> temporarySexMap;
-	map<pair<int, int>, vector<Case*>> mapcompare;
+	//Map that holds cases based on medical condition for case 6
+	unordered_map<bool, vector<Case*>> temporaryMedCondMap;
+	//Map that holds cases based on a date that was hashed
+	unordered_map<short, vector<Case*>> datesMap;
 
-
+	//Temporary key for 
+	short tempKey;
 	//creates an ifstream object
 	ifstream file;
 	// Load the states
@@ -213,9 +226,6 @@ int main() {
 	if (file.is_open()) {
 		//Ignores title lines
 		getline(file, temp);
-
-		//string date;
-		//int counter = 0;
 
 		//Loads data from file into map using commma as delimeter
 		while (getline(file, temp, ',')) {
@@ -232,7 +242,8 @@ int main() {
 
 			//Grabs day and saves it as a 8 bit unsigned int
 			newNode->day = (short)stoi(temp.substr(temp.find('/') + 1, temp.size() - 7));
-			pairforkey = make_pair(newNode->month, newNode->day);
+			//pairforkey = make_pair(newNode->month, newNode->day);
+
 			//Laboratory status, not needed
 			getline(file, temp, ',');
 
@@ -273,17 +284,17 @@ int main() {
 			//map sorted by age
 			caseAgeList[newCase->age].push_back(newCase);
 			//map for comparison
-			mapcompare[pairforkey].push_back(newCase);
+			datesMap[hashf(newNode->month, newNode->day)].push_back(newCase);
 			//map thats sorted by race
 			caseRaceList[newCase->race].push_back(newCase);
 			//map sorted by sex
 			caseListmapSex[newCase->sex].push_back(newCase);
+			//map sorted by medical condition
+			caseListmapMedCond[newCase->medicalCondition].push_back(newCase);
 			//tree sorted by date
-			test_tree->root = test_tree->insert_AVL(test_tree->root, newNode, newCase);
+			datesTree->root = datesTree->insert_AVL(datesTree->root, newNode, newCase);
 		}
 	}
-
-	//cout << "Size of tree: " << test_tree->size << endl;
 
 	//main menu
 	//bool that runs the while loop
@@ -298,21 +309,24 @@ int main() {
 		//int for deaths and hospitalizations
 		short deaths = 0, hosp = 0, icuNum = 0;
 
-		cout << "Main Menu" << endl;
+		
+		cout << "Please select from the menu below to pick the criteria to assess your risk factor with.\n" << 
+			"Or choose option 7 to compare two data structures\n" << endl;
 		//input 2 might not be used as some inputs only require one input
 		short input1, input2;
 
 		//Menu option
-		int option;
-
+		short option;
+		cout << "Main Menu" << endl;
 		//menu opptions
 		cout << "1. Month and Day" << endl;
 		cout << "2. Age" << endl;
 		cout << "3. Race" << endl;
 		cout << "4. Sex" << endl;
-		cout << "5. Race, Age, Sex" << endl;
-		cout << "6. Comparison" << endl;
-		cout << "7. Quit" << endl;
+		cout << "5. Medical Condition" << endl;
+		cout << "6. Race, Age, Sex and Medical Condition" << endl;
+		cout << "7. Comparison" << endl;
+		cout << "8. Quit" << endl;
 
 		//receiving the input
 		cin >> option;
@@ -320,6 +334,7 @@ int main() {
 		short ageinput;
 		short raceinput;
 		short sexinput;
+		short medcondinput;
 
 		//Temporary boolean key
 		bool keyB;
@@ -351,7 +366,7 @@ int main() {
 			cout << input1 << " " << input2 << endl;
 
 			//vector of nodes that matches the searched for date
-			matchDate = test_tree->Search(input1, input2, test_tree->root);
+			matchDate = datesTree->Search(input1, input2, datesTree->root);
 			//cout << "vector return size: " << matchDate.size();
 
 
@@ -508,11 +523,11 @@ int main() {
 			}
 
 			//Prints data
-			cout << "Number of Hospitalizations in your race: " << hosp << endl;
-			cout << "Percentage of hospitalizations among chosen race: " <<
+			cout << "Number of Hospitalizations in your sex: " << hosp << endl;
+			cout << "Percentage of hospitalizations among chosen sex: " <<
 				((float)hosp / caseListmapSex[keyB].size()) * 10.0 << fixed << setprecision(3) << " %\n";
-			cout << "Number of ICU cases in your race: " << icuNum << endl;
-			cout << "Percentage of ICU cases among chosen race: " <<
+			cout << "Number of ICU cases in your sex: " << icuNum << endl;
+			cout << "Percentage of ICU cases among chosen sex: " <<
 				((float)icuNum / caseListmapSex[keyB].size()) * 10.0 << fixed << setprecision(3) << " %\n";
 			cout << "Number of fatalities in your sex: " << deaths << endl;
 			cout << "Percentage of deaths among chosen sex: " <<
@@ -520,6 +535,44 @@ int main() {
 
 			break;
 		case 5:
+			//Asks user for medical condition
+			cout << "Do you have a medical condition: " << endl;
+			cout << "1. Yes" << endl;
+			cout << "2. No" << endl;
+			cin >> medcondinput;
+			if (medcondinput == 1)
+				keyB = 1;
+			else if (medcondinput == 2)
+				keyB = 0;
+			else {
+				cout << "Invalid Selection!" << endl;
+				break;
+			}
+
+			//Counts the total hospitalization, ICU cases and deaths within specied range
+			for (unsigned int i = 0; i < caseListmapMedCond[keyB].size(); i++) {
+				if (caseListmapMedCond[keyB].at(i)->hospitalization == 'Y')
+					hosp++;
+				if (caseListmapMedCond[keyB].at(i)->icu == 'Y')
+					icuNum++;
+				if (caseListmapMedCond[keyB].at(i)->death == 'Y')
+					deaths++;
+			}
+
+			//Prints data
+			cout << "Number of Hospitalizations in your medical condition: " << hosp << endl;
+			cout << "Percentage of hospitalizations among chosen medical condition: " <<
+				((float)hosp / caseListmapMedCond[keyB].size()) * 10.0 << fixed << setprecision(3) << " %\n";
+			cout << "Number of ICU cases in your medical condition: " << icuNum << endl;
+			cout << "Percentage of ICU cases among chosen medical condition: " <<
+				((float)icuNum / caseListmapMedCond[keyB].size()) * 10.0 << fixed << setprecision(3) << " %\n";
+			cout << "Number of fatalities in your medical condition: " << deaths << endl;
+			cout << "Percentage of deaths among chosen medical condition: " <<
+				((float)deaths / caseListmapMedCond[keyB].size()) * 10.0 << fixed << setprecision(3) << " %\n";
+
+
+			break;
+		case 6:
 			cout << "Input your Race: " << endl;
 			cout << "1. Hispanic/Latino" << endl;
 			cout << "2. Black; Non-Hispanic" << endl;
@@ -550,6 +603,11 @@ int main() {
 				break;
 			}
 
+			//Adds all cases with specified race to an age map
+			for (unsigned int i = 0; i < caseRaceList[key1].size(); i++) {
+				temporaryAgeMap[caseRaceList[key1].at(i)->age].push_back(caseRaceList[key1].at(i));
+			}
+
 			//Asks user age
 			cout << "Input your age" << endl;
 			cin >> ageinput;
@@ -572,9 +630,9 @@ int main() {
 			else if (ageinput >= 80)
 				keyC = '8';
 
-			//Adds all cases with age
-			for (unsigned int i = 0; i < caseRaceList[key1].size(); i++) {
-				temporaryAgeMap[caseRaceList[key1].at(i)->age].push_back(caseRaceList[key1].at(i));
+			//Adds all cases with specified age to a sex map
+			for (unsigned int i = 0; i < temporaryAgeMap[keyC].size(); i++) {
+				temporarySexMap[temporaryAgeMap[keyC].at(i)->sex].push_back(temporaryAgeMap[keyC].at(i));
 			}
 
 			//Asks user for their sex
@@ -591,68 +649,84 @@ int main() {
 				break;
 			}
 
-			//Adds all cases bases on sex
-			for (unsigned int i = 0; i < temporaryAgeMap[keyC].size(); i++) {
-				temporarySexMap[temporaryAgeMap[keyC].at(i)->sex].push_back(temporaryAgeMap[keyC].at(i));
+			//Adds all cases with specified sex to a medical condition map
+			for (unsigned int i = 0; i < temporarySexMap[keyB].size(); i++) {
+				temporaryMedCondMap[temporarySexMap[keyB].at(i)->medicalCondition].push_back(temporarySexMap[keyB].at(i));
 			}
 
+			//Asks user for medical condition
+			cout << "Do you have a medical condition: " << endl;
+			cout << "1. Yes" << endl;
+			cout << "2. No" << endl;
+			cin >> medcondinput;
+			if (medcondinput == 1)
+				keyB = 1;
+			else if (medcondinput == 2)
+				keyB = 0;
+			else {
+				cout << "Invalid Selection!" << endl;
+				break;
+			} //temporaryMedCondMap
+
+
 			//Counts the total hospitalization, ICU cases and deaths within specied range
-			for (unsigned int i = 0; i < temporarySexMap[keyB].size(); i++) {
-				if (temporarySexMap[keyB].at(i)->hospitalization == 'Y')
+			for (unsigned int i = 0; i < temporaryMedCondMap[keyB].size(); i++) {
+				if (temporaryMedCondMap[keyB].at(i)->hospitalization == 'Y')
 					hosp++;
-				if (temporarySexMap[keyB].at(i)->icu == 'Y')
+				if (temporaryMedCondMap[keyB].at(i)->icu == 'Y')
 					icuNum++;
-				if (temporarySexMap[keyB].at(i)->death == 'Y')
+				if (temporaryMedCondMap[keyB].at(i)->death == 'Y')
 					deaths++;
 			}
 
 			//Print data
-			cout << "Number of Hospitalizations in your race: " << hosp << endl;
-			cout << "Percentage of hospitalizations among chosen race: " <<
-				((float)hosp / temporarySexMap[keyB].size()) * 10.0 << fixed << setprecision(3) << " %\n";
-			cout << "Number of ICU cases in your race: " << icuNum << endl;
-			cout << "Percentage of ICU cases among chosen race: " <<
-				((float)icuNum / temporarySexMap[keyB].size()) * 10.0 << fixed << setprecision(3) << " %\n";
-			cout << "Number of fatalities in your race: " << deaths << endl;
-			cout << "Percentage of deaths among chosen race: " <<
-				((float)deaths / temporarySexMap[keyB].size()) * 10.0 << fixed << setprecision(3) << " %\n";
+			cout << "Number of Hospitalizations in your demographic: " << hosp << endl;
+			cout << "Percentage of hospitalizations among chosen demographic: " <<
+				((float)hosp / temporaryMedCondMap[keyB].size()) * 10.0 << fixed << setprecision(3) << " %\n";
+			cout << "Number of ICU cases in your demographic: " << icuNum << endl;
+			cout << "Percentage of ICU cases among chosen demographic: " <<
+				((float)icuNum / temporaryMedCondMap[keyB].size()) * 10.0 << fixed << setprecision(3) << " %\n";
+			cout << "Number of fatalities in your demographic: " << deaths << endl;
+			cout << "Percentage of deaths among chosen demographic: " <<
+				((float)deaths / temporaryMedCondMap[keyB].size()) * 10.0 << fixed << setprecision(3) << " %\n";
 			break;
-		case 6:
-			cout << "Insert a Month then a Date" << endl;
+		case 7:
+			cout << "Insert a Month then a Day" << endl;
 			cout << "Month: ";
 			cin >> input1;
-			cout << "Date: ";
+			cout << "Day: ";
 			cin >> input2;
-			start = chrono::system_clock::now();
-
-
-			cout << input1 << " " << input2 << endl;
-
-			//vector of nodes that matches the searched for date
-			matchDate = test_tree->Search(input1, input2, test_tree->root);
-			//cout << "vector return size: " << matchDate.size();
-
-
-			//Counts the total hospitalization, ICU cases and deaths within specied range
-			for (unsigned int i = 0; i < matchDate.size(); i++) {
-				if (matchDate[i]->death == 'Y')
-					deaths++;
-				if (matchDate[i]->icu == 'Y')
-					icuNum++;
-				if (matchDate[i]->hospitalization == 'Y')
-					hosp++;
-			}
+			
 			//bad input check
 			if (input1 > 12 || input1 < 1 || input2 < 1 || input2 > 31) {
 				cout << "Invalid Date!" << endl;
 			}
 			else {
-			    end = chrono::system_clock::now();
+				start = chrono::system_clock::now();
+
+				//cout << input1 << " " << input2 << endl;
+
+				//vector of nodes that matches the searched for date
+				matchDate = datesTree->Search(input1, input2, datesTree->root);
+				//cout << "vector return size: " << matchDate.size();
+
+				//Counts the total hospitalization, ICU cases and deaths within specied range
+				for (unsigned int i = 0; i < matchDate.size(); i++) {
+					if (matchDate[i]->death == 'Y')
+						deaths++;
+					if (matchDate[i]->icu == 'Y')
+						icuNum++;
+					if (matchDate[i]->hospitalization == 'Y')
+						hosp++;
+				}
+
+
+				end = chrono::system_clock::now();
 				chrono::duration<double> elapsed_seconds = end - start;
-			    end_time = chrono::system_clock::to_time_t(end);
+				end_time = chrono::system_clock::to_time_t(end);
 
 				//Prints data
-				cout << "Using an AVL:";
+				cout << "Using an AVL:" << endl;
 				cout << "Number of Hospitalizations on this Date: " << hosp << endl;
 				cout << "Number of ICU cases on this Date: " << icuNum << endl;
 				cout << "Number of Deaths on this Date: " << deaths << endl;
@@ -661,41 +735,44 @@ int main() {
 				icuNum = 0;
 				deaths = 0;
 			}
+
+			cout << "\n\n";
+
 			start = chrono::system_clock::now();
-			mapkey = make_pair(input1, input2);
-			for (int i = 0; i < mapcompare[mapkey].size(); i++) {
-				if (mapcompare[mapkey].at(i)->hospitalization == 'Y')
+			//mapkey = make_pair(input1, input2);
+			tempKey = hashf(input1, input2);
+			for (unsigned int i = 0; i < datesMap[tempKey].size(); i++) {
+				if (datesMap[tempKey].at(i)->hospitalization == 'Y')
 					hosp++;
-				if (mapcompare[mapkey].at(i)->death == 'Y')
+				if (datesMap[tempKey].at(i)->death == 'Y')
 					deaths++;
-				if (mapcompare[mapkey].at(i)->icu == 'Y')
+				if (datesMap[tempKey].at(i)->icu == 'Y')
 					icuNum++;
 
 			}
-		    end = chrono::system_clock::now();
+			end = chrono::system_clock::now();
 			chrono::duration<double> elapsed_seconds = end - start;
-	        end_time = chrono::system_clock::to_time_t(end);
-			cout << "Using a Hashmap:";
+			end_time = chrono::system_clock::to_time_t(end);
+			cout << "Using a Hashmap:" << endl;
 			cout << "Number of Hospitalizations on this Date: " << hosp << endl;
 			cout << "Number of ICU cases on this Date: " << icuNum << endl;
 			cout << "Number of Deaths on this Date: " << deaths << endl;
 			std::cout << "elapsed time for Hashmap: " << elapsed_seconds.count() << "s\n";
 			break;
 
-		case 7:
+		case 8:
 			loop = false;
 			break;
-			//default:
+		default:
 			cout << "Invalid Selection!" << endl;
 			break;
-
-			cout << endl;
-			cout << endl;
-			cout << endl;
-			cout << endl;
-			cout << endl;
-			cout << endl;
 		}
+		cout << endl;
+		cout << endl;
+		cout << endl;
+		cout << endl;
+		cout << endl;
+		cout << endl;
 	}
 	return 0;
 }
