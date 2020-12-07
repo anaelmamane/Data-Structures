@@ -1,19 +1,15 @@
 #include <iostream>
 #include <string>
-#include <map>
 #include <fstream>
-#include <algorithm>
 #include <iomanip>
 #include <unordered_map>
-#include <cstdint>
 #include <vector>
-#include <ctime>  
 #include <chrono>
 
-#define FIXED_DOUBLE4(x) std::fixed <<std::setprecision(4)<<(x)
-#define FIXED_DOUBLE6(x) std::fixed <<std::setprecision(6)<<(x)
-
 using namespace std;
+
+#define FIXED_FLOAT4(x) std::fixed <<std::setprecision(4)<<(x)
+#define FIXED_FLOAT6(x) std::fixed <<std::setprecision(6)<<(x)
 
 //Object that holds a case
 struct Case {
@@ -188,6 +184,32 @@ vector<Case*> AVL_Tree::Search(short month, short date, Node* root) {
 	return found;
 }
 
+//Finds the data needed for the demographic
+void findData(unsigned short &deaths, unsigned short &icuNum, unsigned short &hosp, vector<Case*> &vect) {
+	//Counts the total hospitalization, ICU cases and deaths within specied range
+	for (unsigned int i = 0; i < vect.size(); i++) {
+		if (vect[i]->death == 'Y')
+			deaths++;
+		if (vect[i]->icu == 'Y')
+			icuNum++;
+		if (vect[i]->hospitalization == 'Y')
+			hosp++;
+	}
+}
+
+void printData(unsigned short& deaths, unsigned short& icuNum, unsigned short& hosp, unsigned short size) {
+	cout << "Number of Hospitalizations on this Date: " << hosp << endl;
+	cout << "Percentage of hospitalizations among chosen date: "
+		<< FIXED_FLOAT4(((float)hosp / size) * 10.0) << " %\n";
+	cout << "Number of ICU cases on this Date: " << icuNum << endl;
+	cout << "Percentage of ICU cases among chosen date: "
+		<< FIXED_FLOAT4(((float)icuNum / size) * 10.0) << " %\n";
+	cout << "Number of Deaths on this Date: " << deaths << endl;
+	cout << "Percentage of deaths among chosen date: "
+		<< FIXED_FLOAT4(((float)deaths / size) * 10.0) << " %\n";
+	cout << "Total Cases: " << size << endl;
+}
+
 //Hash funtion that recieves month and day and returns unique key
 short hashf(short month, short day) {
 	return 100 * month + day;
@@ -308,7 +330,7 @@ int main() {
 		vector<Case*> matchDate;
 
 		//int for deaths and hospitalizations
-		short deaths = 0, hosp = 0, icuNum = 0;
+		unsigned short deaths = 0, hosp = 0, icuNum = 0;
 
 
 		cout << "Please select from the menu below to pick the demographic from which to assess your risk factor.\n" <<
@@ -320,7 +342,7 @@ int main() {
 		short option;
 		cout << "Main Menu" << endl;
 		//menu opptions
-		cout << "1. Month and Day" << endl;
+		cout << "1. Month and Date" << endl;
 		cout << "2. Age" << endl;
 		cout << "3. Race" << endl;
 		cout << "4. Sex" << endl;
@@ -364,37 +386,20 @@ int main() {
 			cout << "Date: ";
 			cin >> input2;
 
-			cout << input1 << " " << input2 << endl;
-
 			//vector of nodes that matches the searched for date
 			matchDate = datesTree->Search(input1, input2, datesTree->root);
-			//cout << "vector return size: " << matchDate.size();
 
+			cout << "\n\n";
 
-			//Counts the total hospitalization, ICU cases and deaths within specied range
-			for (unsigned int i = 0; i < matchDate.size(); i++) {
-				if (matchDate[i]->death == 'Y')
-					deaths++;
-				if (matchDate[i]->icu == 'Y')
-					icuNum++;
-				if (matchDate[i]->hospitalization == 'Y')
-					hosp++;
-			}
+			findData(deaths, icuNum, hosp, matchDate);
+			
 			//bad input check
 			if (input1 > 12 || input1 < 1 || input2 < 1 || input2 > 31) {
 				cout << "Invalid Date!" << endl;
 			}
 			else {
 				//Prints data
-				cout << "Number of Hospitalizations on this Date: " << hosp << endl;
-				cout << "Percentage of hospitalizations among chosen date: "
-					<< FIXED_DOUBLE4( ((float)hosp / matchDate.size()) * 10.0)  << " %\n";
-				cout << "Number of ICU cases on this Date: " << icuNum << endl;
-				cout << "Percentage of ICU cases among chosen date: "
-					<< FIXED_DOUBLE4( ((float)icuNum / matchDate.size()) * 10.0) << " %\n";
-				cout << "Number of Deaths on this Date: " << deaths << endl;
-				cout << "Percentage of deaths among chosen date: "
-					<< FIXED_DOUBLE4( ((float)deaths / matchDate.size()) * 10.0) << " %\n";
+				printData(deaths, icuNum, hosp, matchDate.size());
 			}
 			break;
 		case 2:
@@ -421,28 +426,10 @@ int main() {
 				keyC = '8';
 
 			//Counts the total hospitalization, ICU cases and deaths within specied range
-			for (unsigned int i = 0; i < caseAgeList[keyC].size(); i++) {
-
-				if (caseAgeList[keyC].at(i)->hospitalization == 'Y')
-					hosp++;
-				if (caseAgeList[keyC].at(i)->icu == 'Y')
-					icuNum++;
-				if (caseAgeList[keyC].at(i)->death == 'Y')
-					deaths++;
-			}
-
+			findData(deaths, icuNum, hosp, caseAgeList[keyC]);
+			
 			//Prints data
-			cout << "Number of Hospitalizations in your age range: " << hosp << endl;
-			cout << "Percentage of hospitalizations among chosen age range: "
-				<< FIXED_DOUBLE4( ((float)hosp / caseAgeList[keyC].size()) * 10.0) <<  " %\n";
-			cout << "Number of ICU cases in your age range: " << icuNum << endl;
-			cout << "Percentage of ICU cases among chosen age range: "
-				<< FIXED_DOUBLE4( ((float)icuNum / caseAgeList[keyC].size()) * 10.0) <<  " %\n";
-			cout << "Number of fatalities in your age range: " << deaths << endl;
-			cout << "Percentage of deaths among chosen age range: "
-				<< FIXED_DOUBLE4( ((float)deaths / caseAgeList[keyC].size()) * 10.0) <<  " %\n";
-
-
+			printData(deaths, icuNum, hosp, caseAgeList[keyC].size());
 			break;
 		case 3:
 			//Asks user for their race
@@ -477,26 +464,10 @@ int main() {
 			}
 
 			//Counts the total hospitalization, ICU cases and deaths within specied range
-			for (unsigned int i = 0; i < caseRaceList[key].size(); i++) {
-				if (caseRaceList[key].at(i)->hospitalization == 'Y')
-					hosp++;
-				if (caseRaceList[key].at(i)->icu == 'Y')
-					icuNum++;
-				if (caseRaceList[key].at(i)->death == 'Y')
-					deaths++;
-			}
+			findData(deaths, icuNum, hosp, caseRaceList[key]);
 
 			//Prints data
-			cout << "Number of Hospitalizations in your race: " << hosp << endl;
-			cout << "Percentage of hospitalizations among chosen race: " <<
-				FIXED_DOUBLE4( ((float)hosp / caseRaceList[key].size()) * 10.0) <<  " %\n";
-			cout << "Number of ICU cases in your race: " << icuNum << endl;
-			cout << "Percentage of ICU cases among chosen race: " <<
-				FIXED_DOUBLE4( ((float)icuNum / caseRaceList[key].size()) * 10.0 ) << " %\n";
-			cout << "Number of fatalities in your race: " << deaths << endl;
-			cout << "Percentage of deaths among chosen race: " <<
-				FIXED_DOUBLE4( ((float)deaths / caseRaceList[key].size()) * 10.0)  << " %\n";
-
+			printData(deaths, icuNum, hosp, caseRaceList[key].size());
 			break;
 		case 4:
 			//Asks user for sex
@@ -514,26 +485,10 @@ int main() {
 			}
 
 			//Counts the total hospitalization, ICU cases and deaths within specied range
-			for (unsigned int i = 0; i < caseListmapSex[keyB].size(); i++) {
-				if (caseListmapSex[keyB].at(i)->hospitalization == 'Y')
-					hosp++;
-				if (caseListmapSex[keyB].at(i)->icu == 'Y')
-					icuNum++;
-				if (caseListmapSex[keyB].at(i)->death == 'Y')
-					deaths++;
-			}
+			findData(deaths, icuNum, hosp, caseListmapSex[keyB]);
 
 			//Prints data
-			cout << "Number of Hospitalizations in your sex: " << hosp << endl;
-			cout << "Percentage of hospitalizations among chosen sex: " <<
-				FIXED_DOUBLE4( ((float)hosp / caseListmapSex[keyB].size()) * 10.0) <<  " %\n";
-			cout << "Number of ICU cases in your sex: " << icuNum << endl;
-			cout << "Percentage of ICU cases among chosen sex: " <<
-				FIXED_DOUBLE4( ((float)icuNum / caseListmapSex[keyB].size()) * 10.0) << " %\n";
-			cout << "Number of fatalities in your sex: " << deaths << endl;
-			cout << "Percentage of deaths among chosen sex: " <<
-				FIXED_DOUBLE4( ((float)deaths / caseListmapSex[keyB].size()) * 10.0) << " %\n";
-
+			printData(deaths, icuNum, hosp, caseListmapSex[keyB].size());
 			break;
 		case 5:
 			//Asks user for medical condition
@@ -551,27 +506,10 @@ int main() {
 			}
 
 			//Counts the total hospitalization, ICU cases and deaths within specied range
-			for (unsigned int i = 0; i < caseListmapMedCond[keyB].size(); i++) {
-				if (caseListmapMedCond[keyB].at(i)->hospitalization == 'Y')
-					hosp++;
-				if (caseListmapMedCond[keyB].at(i)->icu == 'Y')
-					icuNum++;
-				if (caseListmapMedCond[keyB].at(i)->death == 'Y')
-					deaths++;
-			}
+			findData(deaths, icuNum, hosp, caseListmapMedCond[keyB]);
 
 			//Prints data
-			cout << "Number of Hospitalizations in your medical condition: " << hosp << endl;
-			cout << "Percentage of hospitalizations among chosen medical condition: " <<
-				FIXED_DOUBLE4( ((float)hosp / caseListmapMedCond[keyB].size()) * 10.0) <<  " %\n";
-			cout << "Number of ICU cases in your medical condition: " << icuNum << endl;
-			cout << "Percentage of ICU cases among chosen medical condition: " <<
-				FIXED_DOUBLE4( ((float)icuNum / caseListmapMedCond[keyB].size()) * 10.0)  << " %\n";
-			cout << "Number of fatalities in your medical condition: " << deaths << endl;
-			cout << "Percentage of deaths among chosen medical condition: " <<
-				FIXED_DOUBLE4( ((float)deaths / caseListmapMedCond[keyB].size()) * 10.0)  << " %\n";
-
-
+			printData(deaths, icuNum, hosp, caseListmapMedCond[keyB].size());
 			break;
 		case 6:
 			cout << "Input your Race: " << endl;
@@ -669,30 +607,14 @@ int main() {
 				break;
 			}
 
-
 			//Counts the total hospitalization, ICU cases and deaths within specied range
-			for (unsigned int i = 0; i < temporaryMedCondMap[keyB].size(); i++) {
-				if (temporaryMedCondMap[keyB].at(i)->hospitalization == 'Y')
-					hosp++;
-				if (temporaryMedCondMap[keyB].at(i)->icu == 'Y')
-					icuNum++;
-				if (temporaryMedCondMap[keyB].at(i)->death == 'Y')
-					deaths++;
-			}
+			findData(deaths, icuNum, hosp, temporaryMedCondMap[keyB]);
 
-			//Print data
-			cout << "Number of Hospitalizations in your demographic: " << hosp << endl;
-			cout << "Percentage of hospitalizations among chosen demographic: " <<
-				FIXED_DOUBLE4( ((float)hosp / temporaryMedCondMap[keyB].size()) * 10.0) << " %\n";
-			cout << "Number of ICU cases in your demographic: " << icuNum << endl;
-			cout << "Percentage of ICU cases among chosen demographic: " <<
-				FIXED_DOUBLE4( ((float)icuNum / temporaryMedCondMap[keyB].size()) * 10.0) << " %\n";
-			cout << "Number of fatalities in your demographic: " << deaths << endl;
-			cout << "Percentage of deaths among chosen demographic: " <<
-				FIXED_DOUBLE4( ((float)deaths / temporaryMedCondMap[keyB].size()) * 10.0) << " %\n";
+			//Prints data
+			printData(deaths, icuNum, hosp, temporaryMedCondMap[keyB].size());
 			break;
 		case 7:
-			cout << "Insert a Month then a Day" << endl;
+			cout << "Insert a Month then a Date" << endl;
 			cout << "Month: ";
 			cin >> input1;
 			cout << "Day: ";
@@ -709,14 +631,7 @@ int main() {
 				matchDate = datesTree->Search(input1, input2, datesTree->root);
 
 				//Counts the total hospitalization, ICU cases and deaths within specied range
-				for (unsigned int i = 0; i < matchDate.size(); i++) {
-					if (matchDate[i]->death == 'Y')
-						deaths++;
-					if (matchDate[i]->icu == 'Y')
-						icuNum++;
-					if (matchDate[i]->hospitalization == 'Y')
-						hosp++;
-				}
+				findData(deaths, icuNum, hosp, matchDate);
 
 
 				end = chrono::system_clock::now();
@@ -725,16 +640,12 @@ int main() {
 
 				//Prints data
 				cout << "Using an AVL:" << endl;
-				cout << "Number of Hospitalizations on this Date: " << hosp << endl;
-				cout << "Percentage of Hospitalizations among chosen date: "
-					<< FIXED_DOUBLE4( ((float)hosp / matchDate.size()) * 10.0) << " %\n";
-				cout << "Number of ICU cases on this Date: " << icuNum << endl;
-				cout << "Percentage of ICU cases among chosen date: "
-					<< FIXED_DOUBLE4( ((float)icuNum / matchDate.size()) * 10.0) << " %\n";
-				cout << "Number of Deaths on this Date: " << deaths << endl;
-				cout << "Percentage of deaths among chosen date: "
-					<< FIXED_DOUBLE4( ((float)deaths / matchDate.size()) * 10.0) << " %\n";
-				std::cout << "elapsed time for AVL: " << FIXED_DOUBLE6(elapsed_seconds.count()) << "s\n";
+
+				//Prints data
+				printData(deaths, icuNum, hosp, matchDate.size());
+
+				//Prints time
+				std::cout << "elapsed time for AVL: " << FIXED_FLOAT6(elapsed_seconds.count()) << "s\n";
 				hosp = 0;
 				icuNum = 0;
 				deaths = 0;
@@ -749,31 +660,18 @@ int main() {
 				matchDate = datesMap[tempKey];
 
 				//Counts the total hospitalization, ICU cases and deaths within specied range
-				for (unsigned int i = 0; i < matchDate.size(); i++) {
-					if (matchDate.at(i)->hospitalization == 'Y')
-						hosp++;
-					if (matchDate.at(i)->death == 'Y')
-						deaths++;
-					if (matchDate.at(i)->icu == 'Y')
-						icuNum++;
+				findData(deaths, icuNum, hosp, matchDate);
 
-				}
 				end = chrono::system_clock::now();
 				elapsed_seconds = end - start;
 				end_time = chrono::system_clock::to_time_t(end);
 
 				//Prints data
 				cout << "Using an Unordered Map:" << endl;
-				cout << "Number of Hospitalizations on this Date: " << hosp << endl;
-				cout << "Percentage of Hospitalizations among chosen date: "
-					<< FIXED_DOUBLE4( ((float)hosp / matchDate.size()) * 10.0) << " %\n";
-				cout << "Number of ICU cases on this Date: " << icuNum << endl;
-				cout << "Percentage of ICU cases among chosen date: "
-					<< FIXED_DOUBLE4( ((float)icuNum / matchDate.size()) * 10.0) << " %\n";
-				cout << "Number of Deaths on this Date: " << deaths << endl;
-				cout << "Percentage of deaths among chosen date: "
-					<< FIXED_DOUBLE4( ((float)deaths / matchDate.size()) * 10.0) << " %\n";
-				std::cout << "elapsed time for Hashmap: " << FIXED_DOUBLE6(elapsed_seconds.count()) << "s\n";
+				printData(deaths, icuNum, hosp, matchDate.size());
+
+				//Prints time
+				std::cout << "elapsed time for Hashmap: " << FIXED_FLOAT6(elapsed_seconds.count()) << "s\n";
 			}
 			break;
 
